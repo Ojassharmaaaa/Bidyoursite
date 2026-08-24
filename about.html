@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>About — BidYourSite</title>
-<meta name="description" content="Why BidYourSite exists: a $1 starting line for internet businesses, without brokers, valuations or 15% commissions.">
+<meta name="description" content="Why BidYourSite exists: a $1 starting line for internet businesses, without brokers, valuations or commission on your sale.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -32,7 +32,7 @@
     <div class="panel">
       <h3>What we changed</h3>
       <p style="color:var(--ink-2);margin-bottom:16px">BidYourSite is an auction house for small internet
-      businesses. Every lot opens at one dollar. There is no valuation call, no listing review queue, no
+      businesses. Every lot opens at one dollar and we take no commission when it sells. There is no valuation call, no listing review queue, no
       minimum revenue and no exclusivity agreement. You describe the asset, pick how long it runs, and the
       market answers the only question that matters.</p>
       <p style="color:var(--ink-2)">The dollar is deliberate. It is low enough that listing a dead project
@@ -53,8 +53,8 @@
       <div><div class="kicker">Principles</div><h2>Four things we will not do</h2></div>
     </div>
     <div class="steps">
-      <div class="step"><div class="step-n">&#10007;</div><h4>Charge 15%</h4>
-        <p>Our fee is 5% and stops at $500. A marketplace should not take a bigger cut of your exit than the tax office.</p></div>
+      <div class="step"><div class="step-n">&#10007;</div><h4>Take a cut</h4>
+        <p>You pay $1, $5 or $10 to list and nothing on the sale. A marketplace should not take a bigger share of your exit than the tax office.</p></div>
       <div class="step"><div class="step-n">&#10007;</div><h4>Hide reserves</h4>
         <p>No secret floor prices. A bidder who beats the increment has genuinely won the lot at that price.</p></div>
       <div class="step"><div class="step-n">&#10007;</div><h4>Let snipers win</h4>
@@ -138,7 +138,7 @@ document.addEventListener('bys:ready', function () {
     [s.liveCount, 'Live now'],
     [BYS.money(s.volume), 'Bid to date'],
     [s.totalBids, 'Bids placed'],
-    ['5%', 'Fee, capped at $500']
+    ['0%', 'Commission on your sale']
   ].map(function (r) {
     return '<div class="stat"><div class="stat-v">' + r[0] + '</div><div class="stat-l">' + r[1] + '</div></div>';
   }).join('');

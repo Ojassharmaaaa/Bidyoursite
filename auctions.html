@@ -119,6 +119,10 @@ document.addEventListener('bys:ready', function () {
 
   function render() {
     var rows = BYS.all().filter(match).sort(SORTS[f.sort] || SORTS.ending);
+    // Paid placement applies to the default view only — an explicit sort stays honest.
+    if (f.sort === 'ending') {
+      rows.sort(function (a, b) { return BYS.tierRank(b.tier) - BYS.tierRank(a.tier); });
+    }
     $('#count').textContent = rows.length + ' lot' + (rows.length === 1 ? '' : 's') +
       (f.cat ? ' in ' + f.cat : '') + (f.q ? ' matching "' + f.q + '"' : '');
     $('#grid').innerHTML = rows.map(BYS.cardHTML).join('');

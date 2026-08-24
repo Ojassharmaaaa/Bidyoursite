@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>List your site for $1 — BidYourSite</title>
-<meta name="description" content="Put your website, domain, newsletter or app on the block for $1. Flat 5% success fee capped at $500, nothing if it does not sell.">
+<meta name="description" content="Put your website, domain, newsletter or app on the block for $1. Pick a $1, $5 or $10 listing tier. We take no commission on the sale.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
 
 <div class="wrap pg-head">
   <h1>List it for a dollar</h1>
-  <p>Three steps, about three minutes. The opening price is always $1 — that is the point. You pay 5% of the final price, capped at $500, and nothing at all if it does not sell.</p>
+  <p>Three steps, about three minutes. The opening price is always $1 — that is the point. Listing costs $1, $5 or $10 depending on how much visibility you want, and we take <strong>no commission on the sale</strong>.</p>
 </div>
 
 <div class="wrap detail" style="grid-template-columns:1.35fr 1fr;padding-top:28px">
@@ -112,15 +112,16 @@
         <!-- ---------- step 3 ---------- -->
         <div class="pane" data-pane="3">
           <div class="form-grid">
+            <div>
+              <label class="lb">Listing tier <small>· one payment, no commission on the sale</small></label>
+              <div class="tier-opt" id="tierOpt"></div>
+              <div class="hint" id="tierPerks"></div>
+            </div>
             <div class="f2">
               <div>
                 <label class="lb" for="days">Auction length</label>
-                <select class="fld" id="days">
-                  <option value="1">1 day — fast flip</option>
-                  <option value="3">3 days</option>
-                  <option value="7" selected>7 days — recommended</option>
-                  <option value="14">14 days — maximum reach</option>
-                </select>
+                <select class="fld" id="days"></select>
+                <div class="hint" id="daysHint"></div>
               </div>
               <div>
                 <label class="lb" for="buyNow">Instant-buy price <small>· optional</small></label>
@@ -151,7 +152,7 @@
         <div style="display:flex;gap:10px;margin-top:26px">
           <button type="button" class="btn btn-g" id="back" style="display:none">Back</button>
           <button type="button" class="btn btn-p" id="next" style="margin-left:auto">Continue</button>
-          <button type="submit" class="btn btn-p" id="submit" style="margin-left:auto;display:none">Publish for $1</button>
+          <button type="submit" class="btn btn-p" id="submit" style="margin-left:auto;display:none">Publish</button>
         </div>
       </form>
     </div>
@@ -173,7 +174,7 @@
       <ul style="list-style:none;display:flex;flex-direction:column;gap:11px;font-size:.89rem;color:var(--ink-2)">
         <li><strong>Post the ugly numbers.</strong> Churn, refunds, the month revenue dipped. Buyers discount what they cannot see.</li>
         <li><strong>7 days beats 1 day</strong> for anything over $1,000 — it takes a weekend for serious buyers to surface.</li>
-        <li><strong>Skip the instant-buy price</strong> unless you genuinely want out fast; it caps your upside.</li>
+        <li><strong>Skip the instant-buy price</strong> unless you genuinely want out fast; it caps your upside, and the fee is the same either way.</li>
         <li><strong>Answer questions within a day.</strong> Lots with an active seller thread take 3× more bids.</li>
       </ul>
     </div>
@@ -187,8 +188,37 @@ document.addEventListener('bys:ready', function () {
   var $ = function (s) { return document.querySelector(s); };
   var step = 1, verify = 'stripe';
   var hue = Math.floor(Math.random() * 360);
+  var chosen = new URLSearchParams(location.search).get('tier');
+  if (!BYS.TIERS[chosen]) chosen = 'basic';
 
   $('#cat').innerHTML = BYS.CATS.map(function (c) { return '<option>' + c + '</option>'; }).join('');
+
+  function paintTiers() {
+    $('#tierOpt').innerHTML = BYS.TIER_ORDER.map(function (id) {
+      var t = BYS.TIERS[id];
+      return '<button type="button" class="' + (id === chosen ? 'on' : '') + '" data-tier="' + id + '">' +
+        '<div class="p">$' + t.price + '</div><div class="n">' + t.name + '</div>' +
+        '<div class="d">' + t.blurb + '</div></button>';
+    }).join('');
+    $('#tierOpt').querySelectorAll('[data-tier]').forEach(function (b) {
+      b.onclick = function () { chosen = b.dataset.tier; paintTiers(); paintDays(); preview(); };
+    });
+    var t = BYS.TIERS[chosen];
+    $('#tierPerks').innerHTML = t.perks.map(function (p) { return '&#10003; ' + p; }).join(' &nbsp;·&nbsp; ');
+  }
+
+  // Longer runs are a paid perk, so the length options depend on the tier.
+  function paintDays() {
+    var max = BYS.TIERS[chosen].days;
+    var opts = [1, 3, 7, 14].filter(function (d) { return d <= max; });
+    $('#days').innerHTML = opts.map(function (d) {
+      return '<option value="' + d + '"' + (d === (max >= 7 ? 7 : max) ? ' selected' : '') + '>' + d +
+        ' day' + (d > 1 ? 's' : '') + (d === 7 ? ' — recommended' : d === 14 ? ' — maximum reach' : '') + '</option>';
+    }).join('');
+    $('#daysHint').textContent = max === 14
+      ? 'Up to 14 days on this tier.'
+      : 'Basic runs up to 7 days. Featured and Spotlight unlock 14.';
+  }
 
   function data() {
     return {
@@ -202,8 +232,9 @@ document.addEventListener('bys:ready', function () {
       profit: Number($('#profit').value) || 0,
       traffic: Number($('#traffic').value) || 0,
       age: $('#age').value.trim() || 'new',
-      days: Number($('#days').value),
-      buyNow: Number($('#buyNow').value) || 0
+      days: Number($('#days').value) || BYS.TIERS[chosen].days,
+      buyNow: Number($('#buyNow').value) || 0,
+      tier: chosen
     };
   }
 
@@ -211,7 +242,7 @@ document.addEventListener('bys:ready', function () {
     var d = data();
     var fake = Object.assign({}, d, {
       id: 'preview', cur: 1, bids: 0, hue: hue, verified: verify !== 'none',
-      seller: BYS.state.user.name, createdAt: Date.now(),
+      seller: BYS.state.user.name, createdAt: Date.now(), tier: chosen,
       endsAt: Date.now() + d.days * 86400000
     });
     var html = BYS.cardHTML(fake).replace(/href="auction\.html\?id=preview"/g, 'href="#"');
@@ -219,18 +250,17 @@ document.addEventListener('bys:ready', function () {
     $('#preview').querySelectorAll('[data-watch]').forEach(function (b) { b.onclick = function (e) { e.preventDefault(); }; });
 
     var est = d.buyNow || (d.profit ? d.profit * 30 : 800);
-    var f = BYS.fee(est);
+    var t = BYS.TIERS[chosen];
     $('#costs').innerHTML =
-      '<div class="row"><span>Listing fee today</span><span>$1</span></div>' +
-      '<div class="row"><span>Credited back on sale</span><span style="color:var(--accent)">−$1</span></div>' +
-      '<div class="row"><span>Success fee (5%, max $500)</span><span>' + BYS.money(f) + '</span></div>' +
+      '<div class="row"><span>' + t.name + ' listing, charged once</span><span>$' + t.price + '</span></div>' +
+      '<div class="row"><span>Commission on the sale</span><span style="color:var(--accent)">$0</span></div>' +
       '<div class="row"><span>Escrow &amp; transfer</span><span>$0</span></div>' +
       '<div class="row"><span><strong>If it closes near ' + BYS.money(est) + '</strong></span>' +
-      '<span style="color:var(--accent)">You keep ' + BYS.money(est - f) + '</span></div>';
+      '<span style="color:var(--accent)">You keep ' + BYS.money(est) + '</span></div>';
 
-    $('#feeNote').innerHTML = '<b>No sale, no fee.</b> If your lot ends without a bid above $1 you owe nothing ' +
-      'and can relist once for free. On a sale we take 5% capped at $500 — a ' + BYS.money(est) +
-      ' close costs you ' + BYS.money(f) + '.';
+    $('#feeNote').innerHTML = '<b>$' + t.price + ' today, nothing afterwards.</b> We take no percentage of the sale — ' +
+      'a ' + BYS.money(est) + ' close costs you the same $' + t.price + ' as a $40 one. ' +
+      'If your lot ends without a bid above $1 you can relist once for free.';
 
     if (d.profit) {
       $('#guideLo').textContent = BYS.money(d.profit * 24);
@@ -284,11 +314,11 @@ document.addEventListener('bys:ready', function () {
     if (!valid(1)) { step = 1; paintStep(); return; }
     if (!$('#agree').checked) { BYS.toast('err', 'One more thing', 'Tick the box to confirm ownership and binding bids.'); return; }
     var it = BYS.createListing(data());
-    BYS.toast('ok', 'Your lot is live', it.title + ' is open at $1.');
+    BYS.toast('ok', 'Your lot is live', it.title + ' is open at $1 on the ' + BYS.tier(it.tier).name + ' tier.');
     setTimeout(function () { location.href = 'auction.html?id=' + it.id; }, 900);
   });
 
-  paintStep(); preview();
+  paintTiers(); paintDays(); paintStep(); preview();
 });
 </script>
 

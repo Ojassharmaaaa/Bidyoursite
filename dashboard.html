@@ -95,13 +95,13 @@ document.addEventListener('bys:ready', function () {
     if (!mine.length) return empty('&#128228;', 'You have not listed anything', 'It costs a dollar to find out what your project is worth.', ['List for $1', 'sell.html']);
     return '<div class="panel" style="padding:8px">' + mine.map(function (it) {
       var t = BYS.left(it.endsAt - Date.now());
-      var f = BYS.fee(it.cur);
       return '<a class="hist-i" href="auction.html?id=' + it.id + '" style="padding:14px">' +
         '<div class="av" style="width:44px;height:44px;border-radius:11px;' + BYS.art(it.hue) + '">' + BYS.esc(BYS.initials(it.domain)) + '</div>' +
         '<div class="hist-m"><div class="hist-n">' + BYS.esc(it.title) + '</div>' +
         '<div class="hist-t">' + it.bids + ' bids · ' + it.views + ' views · ' + it.watchers + ' watching</div></div>' +
         '<div style="text-align:right"><div class="hist-v">' + BYS.money(it.cur) + '</div>' +
-        '<div class="hist-t">' + (t.done ? 'closed' : t.txt) + ' · net ' + BYS.money(it.cur - f) + '</div></div></a>';
+        '<div class="hist-t">' + (t.done ? 'closed' : t.txt) + ' · ' + BYS.tier(it.tier).name +
+        ' tier · you keep ' + BYS.money(it.cur) + '</div></div></a>';
     }).join('') + '</div>';
   }
 
@@ -113,7 +113,7 @@ document.addEventListener('bys:ready', function () {
       return '<a class="hist-i" href="auction.html?id=' + it.id + '" style="padding:14px">' +
         '<div class="av" style="width:44px;height:44px;border-radius:11px;' + BYS.art(it.hue) + '">' + BYS.esc(BYS.initials(it.domain)) + '</div>' +
         '<div class="hist-m"><div class="hist-n">' + BYS.esc(it.title) + '</div>' +
-        '<div class="hist-t">' + (w ? 'You won · fee ' + BYS.money(BYS.fee(it.cur)) + ' · escrow open' : 'Sold to ' + BYS.esc(it.history[0].by)) + '</div></div>' +
+        '<div class="hist-t">' + (w ? 'You won · escrow open' : 'Sold to ' + BYS.esc(it.history[0].by)) + '</div></div>' +
         '<div style="text-align:right"><div class="hist-v">' + BYS.money(it.cur) + '</div>' +
         '<div class="hist-t" style="color:' + (w ? 'var(--accent)' : 'var(--ink-3)') + '">' + (w ? 'WON' : 'lost') + '</div></div></a>';
     }).join('') + '</div>';

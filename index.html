@@ -24,12 +24,12 @@
   <div class="wrap hero-in">
     <span class="pill"><span class="pulse"></span><span id="liveLine">Loading live auctions…</span></span>
     <h1 class="hero-t">Your side project has<br>a <span class="grad">market price</span>.</h1>
-    <p class="hero-s">List a website, domain, newsletter or app for <strong>$1</strong> — no valuation calls, no brokers, no 15% commission. Real buyers bid it up to whatever it is actually worth.</p>
+    <p class="hero-s">List a website, domain, newsletter or app for <strong>$1</strong> — no valuation calls, no brokers, no commission. Real buyers bid it up to whatever it is actually worth, and <strong>you keep every cent of the sale</strong>.</p>
     <div class="hero-cta">
       <a class="btn btn-p btn-lg" href="sell.html">List my site for $1</a>
       <a class="btn btn-g btn-lg" href="auctions.html">Browse live auctions</a>
     </div>
-    <p class="hero-note">Flat 5% success fee, capped at $500 · Escrow-backed handover · No fee if it does not sell</p>
+    <p class="hero-note">$1, $5 or $10 to list · <strong>0% commission on the sale</strong> · Escrow-backed handover</p>
     <div class="stats" id="stats"></div>
   </div>
 </section>
@@ -71,9 +71,9 @@
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <div class="kicker">Most contested</div>
-        <h2>Hot right now</h2>
-        <p>Lots taking the most bids in the last stretch.</p>
+        <div class="kicker">Spotlight</div>
+        <h2>Featured lots</h2>
+        <p>Sellers on the Spotlight and Featured tiers, then whatever is taking the most bids.</p>
       </div>
       <a class="btn btn-g" href="auctions.html?sort=bids">See all</a>
     </div>
@@ -103,15 +103,34 @@
   </div>
 </section>
 
+<!-- ============ pricing ============ -->
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-head" style="justify-content:center;text-align:center">
+      <div>
+        <div class="kicker">Pricing</div>
+        <h2>One payment. No commission. Ever.</h2>
+        <p style="max-width:560px;margin:8px auto 0">Brokers take 15% of your exit. We take a few dollars when you
+        list, and <strong>nothing at all when you sell</strong> — a $40,000 close costs you the same $10 as a $40 one.</p>
+      </div>
+    </div>
+    <div class="grid" id="tiers" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));max-width:940px;margin:0 auto"></div>
+    <p style="text-align:center;color:var(--ink-3);font-size:.87rem;margin-top:22px">
+      Every tier includes escrow-backed handover, proxy bidding and the anti-snipe clock.
+      No sale? No further charge, and one free relist.</p>
+  </div>
+</section>
+
 <!-- ============ why different ============ -->
-<section class="sec">
+<section class="sec" style="padding-top:0">
   <div class="wrap split">
     <div>
       <div class="kicker">Why bother</div>
-      <h2 style="font-size:clamp(1.7rem,3.6vw,2.2rem);letter-spacing:-.03em;margin:10px 0 16px">Brokers take 15%. We take 5%, capped.</h2>
-      <p style="color:var(--ink-2);margin-bottom:18px">A marketplace listing should not cost more than the asset earns in a month. Our fee is a flat 5% of the hammer price with a hard $500 ceiling — sell a $40,000 SaaS and you still pay $500.</p>
+      <h2 style="font-size:clamp(1.7rem,3.6vw,2.2rem);letter-spacing:-.03em;margin:10px 0 16px">Keep 100% of what your site sells for.</h2>
+      <p style="color:var(--ink-2);margin-bottom:18px">A marketplace should not take a bigger cut of your exit than
+      the tax office. You pay once to list. Whatever the hammer falls at is yours, minus nothing.</p>
       <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
-        <li>&#10003; &nbsp;<strong>No listing fee beyond $1</strong> — and the dollar is credited back if the lot sells.</li>
+        <li>&#10003; &nbsp;<strong>0% commission</strong> — sell for $40,000 and we still take $0 of it.</li>
         <li>&#10003; &nbsp;<strong>Proxy bidding</strong> — set a ceiling, walk away, the system bids for you in increments.</li>
         <li>&#10003; &nbsp;<strong>Anti-snipe clock</strong> — bids inside the last 2 minutes extend the auction.</li>
         <li>&#10003; &nbsp;<strong>Reserve-free by design</strong> — everything opens at $1, so listings actually attract bidders.</li>
@@ -120,21 +139,16 @@
       <a class="btn btn-p btn-lg" href="sell.html" style="margin-top:26px">Start a $1 listing</a>
     </div>
     <div class="panel">
-      <h3>Fee calculator</h3>
-      <label class="lb">Expected hammer price</label>
-      <input class="fld" type="range" id="feeRange" min="100" max="40000" step="100" value="4200">
-      <div style="display:flex;justify-content:space-between;margin-top:14px" class="rows">
-        <div style="flex:1">
-          <div class="rows">
-            <div class="row"><span>Hammer price</span><span id="fpHammer">$4,200</span></div>
-            <div class="row"><span>BidYourSite fee (5%, max $500)</span><span id="fpFee">$210</span></div>
-            <div class="row"><span>Escrow handling</span><span>$0</span></div>
-            <div class="row"><span><strong>You receive</strong></span><span id="fpNet" style="color:var(--accent);font-size:1.1rem">$3,990</span></div>
-            <div class="row"><span>A 15% broker would keep</span><span id="fpBroker" style="color:var(--danger)">$630</span></div>
-          </div>
-        </div>
+      <h3>What a $4,200 sale costs you</h3>
+      <div class="rows">
+        <div class="row"><span>BidYourSite &mdash; Basic listing</span><span style="color:var(--accent)">$1</span></div>
+        <div class="row"><span>BidYourSite &mdash; commission</span><span style="color:var(--accent)">$0</span></div>
+        <div class="row"><span><strong>You keep</strong></span><span style="color:var(--accent);font-size:1.15rem">$4,199</span></div>
+        <div class="row" style="padding-top:18px"><span>A 15% broker would keep</span><span style="color:var(--danger)">$630</span></div>
+        <div class="row"><span>A 10% marketplace would keep</span><span style="color:var(--danger)">$420</span></div>
       </div>
-      <div class="note" style="margin-top:16px">Sellers keep <b id="fpPct">95%</b> of the hammer price on this lot.</div>
+      <div class="note" style="margin-top:16px">The maths does not change with the price. <b>$10 is the most any
+      listing can ever cost you</b>, whether it closes at $40 or $40,000.</div>
     </div>
   </div>
 </section>
@@ -180,7 +194,10 @@ document.addEventListener('bys:ready', function () {
   function paintGrids() {
     var liveOnes = BYS.liveItems();
     var ending = liveOnes.slice().sort(function (a, b) { return a.endsAt - b.endsAt; }).slice(0, 6);
-    var hot = liveOnes.slice().sort(function (a, b) { return b.bids - a.bids; }).slice(0, 3);
+    // Spotlight and Featured lots earn the homepage slots they paid for.
+    var hot = liveOnes.slice().sort(function (a, b) {
+      return (BYS.tierRank(b.tier) - BYS.tierRank(a.tier)) || (b.bids - a.bids);
+    }).slice(0, 3);
     $('#ending').innerHTML = ending.map(BYS.cardHTML).join('');
     $('#hot').innerHTML = hot.map(BYS.cardHTML).join('');
     BYS.bindWatch();
@@ -200,20 +217,21 @@ document.addEventListener('bys:ready', function () {
     }).join('');
   }
 
-  // fee calculator
-  var r = $('#feeRange');
-  function paintFee() {
-    var v = Number(r.value), f = BYS.fee(v);
-    $('#fpHammer').textContent = BYS.money(v);
-    $('#fpFee').textContent = BYS.money(f);
-    $('#fpNet').textContent = BYS.money(v - f);
-    $('#fpBroker').textContent = BYS.money(v * 0.15);
-    $('#fpPct').textContent = Math.round((v - f) / v * 100) + '%';
+  function paintTiers() {
+    $('#tiers').innerHTML = BYS.TIER_ORDER.map(function (id) {
+      var t = BYS.TIERS[id];
+      return '<div class="tier-card' + (id === 'featured' ? ' pick' : '') + '">' +
+        (id === 'featured' ? '<span class="tag-best">Most popular</span>' : '') +
+        '<h4>' + t.name + '</h4>' +
+        '<div class="tier-price">$' + t.price + ' <small>one-off</small></div>' +
+        '<p class="blurb">' + t.blurb + '</p>' +
+        '<ul>' + t.perks.map(function (p) { return '<li>' + p + '</li>'; }).join('') + '</ul>' +
+        '<a class="btn ' + (id === 'featured' ? 'btn-p' : 'btn-g') + ' btn-block" href="sell.html?tier=' + id + '">' +
+        'List on ' + t.name + '</a></div>';
+    }).join('');
   }
-  r.addEventListener('input', paintFee);
-  paintFee();
 
-  function all() { paintStats(); paintGrids(); paintCats(); paintTicker(); }
+  function all() { paintStats(); paintGrids(); paintCats(); paintTicker(); paintTiers(); }
   all();
   document.addEventListener('bys:update', function () { paintStats(); paintGrids(); });
 });

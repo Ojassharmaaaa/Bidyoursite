@@ -21,7 +21,7 @@
 
 <div class="wrap pg-head">
   <h1>The rules</h1>
-  <p>Short version: bids are binding, everything opens at $1, money moves through escrow, and we take 5% capped at $500 only when a lot actually sells.</p>
+  <p>Short version: bids are binding, everything opens at $1, money moves through escrow, and listing costs $1, $5 or $10 &mdash; we take <strong>no commission on the sale</strong>.</p>
 </div>
 
 <div class="wrap detail" style="grid-template-columns:1.5fr 1fr;padding-top:26px">
@@ -73,11 +73,13 @@
     <div class="panel">
       <h3>4 · Fees</h3>
       <div class="rows">
-        <div class="row"><span>Listing fee</span><span>$1, credited back if the lot sells</span></div>
-        <div class="row"><span>Success fee</span><span>5% of the hammer price, capped at $500</span></div>
+        <div class="row"><span>Basic listing</span><span>$1 &mdash; Browse listing, 7-day auction</span></div>
+        <div class="row"><span>Featured listing</span><span>$5 &mdash; homepage placement, badge, 14 days</span></div>
+        <div class="row"><span>Spotlight listing</span><span>$10 &mdash; top of Browse, homepage hero, 14 days</span></div>
+        <div class="row"><span>Commission on the sale</span><span><strong>0%</strong> &mdash; we take none of the hammer price</span></div>
         <div class="row"><span>Buyer's premium</span><span>None</span></div>
         <div class="row"><span>Escrow handling</span><span>Covered by us on sales above $500</span></div>
-        <div class="row"><span>If it does not sell</span><span>No fee, and one free relist</span></div>
+        <div class="row"><span>If it does not sell</span><span>No further charge, and one free relist</span></div>
       </div>
     </div>
 
@@ -115,14 +117,16 @@
       </ul>
     </div>
     <div class="panel">
-      <h3>Fee calculator</h3>
-      <label class="lb">Hammer price</label>
+      <h3>What it costs</h3>
+      <label class="lb">If your lot closes at</label>
       <input class="fld" type="number" id="hp" value="4200" min="1">
       <div class="rows" style="margin-top:14px">
-        <div class="row"><span>Our fee</span><span id="rf">—</span></div>
-        <div class="row"><span>You keep</span><span id="rn" style="color:var(--accent)">—</span></div>
-        <div class="row"><span>Effective rate</span><span id="rr">—</span></div>
+        <div class="row"><span>Listing tier</span><span id="rt">Basic &mdash; $1</span></div>
+        <div class="row"><span>Commission</span><span style="color:var(--accent)">$0</span></div>
+        <div class="row"><span>You keep</span><span id="rn" style="color:var(--accent)">&mdash;</span></div>
+        <div class="row"><span>Effective rate</span><span id="rr">&mdash;</span></div>
       </div>
+      <div class="hint" style="margin-top:10px">The rate falls as the price rises, because the cost never moves.</div>
     </div>
     <div class="panel">
       <h3>Still unsure?</h3>
@@ -146,6 +150,8 @@ document.addEventListener('bys:ready', function () {
      'Reserves kill auctions. A lot opening at $1 gets bids in the first hour, and early bids attract more bidders — the price finds its level far faster than a listing sitting at an optimistic asking price for three months.'],
     ['What stops someone bidding $50,000 and vanishing?',
      'Bidders are verified before their first bid and carry a bidding limit tied to that verification. A winner who does not pay within 48 hours forfeits their deposit, loses the lot to the underbidder and is removed from the marketplace.'],
+    ['Do you really take nothing when it sells?',
+     'Correct. You pay $1, $5 or $10 once, when you list. Whatever the hammer falls at is yours. We would rather charge every seller a few dollars than take a percentage from the few who sell big — it keeps our incentives on getting your lot in front of buyers, not on inflating one headline sale.'],
     ['Can I set a minimum I would accept?',
      'Not a hidden reserve, no. You can set an instant-buy price to cap the auction, or pick a shorter run time. If you need a floor, this is probably the wrong marketplace for that asset.'],
     ['How do you verify revenue?',
@@ -165,10 +171,10 @@ document.addEventListener('bys:ready', function () {
   });
 
   function calc() {
-    var v = Math.max(1, Number($('#hp').value) || 0), f = BYS.fee(v);
-    $('#rf').textContent = BYS.money(f);
-    $('#rn').textContent = BYS.money(v - f);
-    $('#rr').textContent = (f / v * 100).toFixed(2) + '%';
+    var v = Math.max(1, Number($('#hp').value) || 0), f = 1;   // Basic tier
+    $('#rt').innerHTML = 'Basic &mdash; $1';
+    $('#rn').textContent = BYS.money(v);
+    $('#rr').textContent = (f / v * 100).toFixed(3) + '% of the sale';
   }
   $('#hp').addEventListener('input', calc);
   calc();

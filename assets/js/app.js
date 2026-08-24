@@ -21,7 +21,7 @@
       start: 1, cur: 1420, buyNow: 4200, bids: 34, ends: 6 * HOUR + 42 * MIN,
       seller: 'aditya.dev', verified: true, rating: 4.9, sales: 12,
       mrr: 1062, profit: 940, traffic: 8400, age: '2 yr 4 mo',
-      tech: ['Next.js', 'Supabase', 'Stripe', 'Vercel'], hue: 258
+      tech: ['Next.js', 'Supabase', 'Stripe', 'Vercel'], hue: 258, tier: 'spotlight'
     },
     {
       title: 'The Sunday Stack — 24k Newsletter',
@@ -30,7 +30,7 @@
       start: 1, cur: 2650, buyNow: 7500, bids: 51, ends: 1 * DAY + 3 * HOUR,
       seller: 'mira.writes', verified: true, rating: 5.0, sales: 4,
       mrr: 2600, profit: 2450, traffic: 12000, age: '3 yr 1 mo',
-      tech: ['Buttondown', 'Ghost', 'Cloudflare'], hue: 168
+      tech: ['Buttondown', 'Ghost', 'Cloudflare'], hue: 168, tier: 'spotlight'
     },
     {
       title: 'quietfocus.com — Premium .com',
@@ -39,7 +39,7 @@
       start: 1, cur: 780, buyNow: 2400, bids: 19, ends: 3 * HOUR + 11 * MIN,
       seller: 'domainvault', verified: true, rating: 4.7, sales: 88,
       mrr: 0, profit: 0, traffic: 140, age: '16 yr',
-      tech: ['Namecheap'], hue: 30
+      tech: ['Namecheap'], hue: 30, tier: 'basic'
     },
     {
       title: 'Trailhead Gear — Shopify Store',
@@ -48,7 +48,7 @@
       start: 1, cur: 5300, buyNow: 18000, bids: 67, ends: 2 * DAY + 5 * HOUR,
       seller: 'growthgoods', verified: true, rating: 4.8, sales: 7,
       mrr: 3400, profit: 3100, traffic: 46000, age: '1 yr 8 mo',
-      tech: ['Shopify', 'Klaviyo', 'Meta Ads'], hue: 12
+      tech: ['Shopify', 'Klaviyo', 'Meta Ads'], hue: 12, tier: 'featured'
     },
     {
       title: 'RegexCheatsheet — 190k/mo Content Site',
@@ -57,7 +57,7 @@
       start: 1, cur: 1980, buyNow: 5600, bids: 42, ends: 22 * HOUR + 30 * MIN,
       seller: 'seo.kai', verified: false, rating: 4.4, sales: 3,
       mrr: 610, profit: 590, traffic: 190000, age: '4 yr',
-      tech: ['Astro', 'Carbon Ads', 'Netlify'], hue: 288
+      tech: ['Astro', 'Carbon Ads', 'Netlify'], hue: 288, tier: 'basic'
     },
     {
       title: 'PocketHabit — iOS Habit Tracker',
@@ -66,7 +66,7 @@
       start: 1, cur: 940, buyNow: 3200, bids: 26, ends: 47 * MIN,
       seller: 'swiftsam', verified: true, rating: 4.6, sales: 2,
       mrr: 380, profit: 380, traffic: 3100, age: '2 yr',
-      tech: ['SwiftUI', 'CloudKit', 'RevenueCat'], hue: 200
+      tech: ['SwiftUI', 'CloudKit', 'RevenueCat'], hue: 200, tier: 'featured'
     },
     {
       title: 'IndieDesk — Discord Community',
@@ -75,7 +75,7 @@
       start: 1, cur: 1310, buyNow: 3900, bids: 30, ends: 1 * DAY + 14 * HOUR,
       seller: 'community.jo', verified: true, rating: 4.9, sales: 5,
       mrr: 840, profit: 800, traffic: 5200, age: '2 yr 7 mo',
-      tech: ['Discord', 'Whop', 'Zapier'], hue: 320
+      tech: ['Discord', 'Whop', 'Zapier'], hue: 320, tier: 'basic'
     },
     {
       title: 'ShipMetrics — Analytics Dashboard',
@@ -84,7 +84,7 @@
       start: 1, cur: 3450, buyNow: 12500, bids: 58, ends: 4 * DAY + 2 * HOUR,
       seller: 'aditya.dev', verified: true, rating: 4.9, sales: 12,
       mrr: 2900, profit: 2200, traffic: 15600, age: '1 yr 11 mo',
-      tech: ['Go', 'ClickHouse', 'Docker', 'Fly.io'], hue: 224
+      tech: ['Go', 'ClickHouse', 'Docker', 'Fly.io'], hue: 224, tier: 'spotlight'
     },
     {
       title: 'Slow Coffee Journal — Blog + Store',
@@ -93,7 +93,7 @@
       start: 1, cur: 620, buyNow: 2100, bids: 14, ends: 9 * HOUR + 5 * MIN,
       seller: 'brewnotes', verified: false, rating: 4.2, sales: 1,
       mrr: 290, profit: 260, traffic: 68000, age: '3 yr 5 mo',
-      tech: ['WordPress', 'Printful'], hue: 44
+      tech: ['WordPress', 'Printful'], hue: 44, tier: 'basic'
     },
     {
       title: 'formkit.tools — Short Tool Domain',
@@ -102,7 +102,7 @@
       start: 1, cur: 210, buyNow: 900, bids: 8, ends: 2 * HOUR + 26 * MIN,
       seller: 'domainvault', verified: true, rating: 4.7, sales: 88,
       mrr: 0, profit: 0, traffic: 60, age: '4 yr 2 mo',
-      tech: ['Porkbun'], hue: 96
+      tech: ['Porkbun'], hue: 96, tier: 'basic'
     },
     {
       title: 'Deskmat Co. — Print-on-Demand Brand',
@@ -111,7 +111,7 @@
       start: 1, cur: 1150, buyNow: 4400, bids: 23, ends: 1 * DAY + 8 * HOUR,
       seller: 'growthgoods', verified: true, rating: 4.8, sales: 7,
       mrr: 780, profit: 610, traffic: 21000, age: '1 yr 3 mo',
-      tech: ['Shopify', 'Printify', 'Instagram'], hue: 340
+      tech: ['Shopify', 'Printify', 'Instagram'], hue: 340, tier: 'featured'
     },
     {
       title: 'Cron Cabin — Scheduled Jobs API',
@@ -120,7 +120,7 @@
       start: 1, cur: 760, buyNow: 3600, bids: 17, ends: 5 * HOUR + 55 * MIN,
       seller: 'rustyrae', verified: false, rating: 4.5, sales: 2,
       mrr: 456, profit: 420, traffic: 4200, age: '1 yr',
-      tech: ['Rust', 'Postgres', 'Hetzner'], hue: 14
+      tech: ['Rust', 'Postgres', 'Hetzner'], hue: 14, tier: 'basic'
     }
   ];
 
@@ -229,10 +229,32 @@
   }
   function minBid(it) { return it.cur + increment(it.cur); }
 
-  /* Marketplace fee: 5% of the hammer price, floor $1, capped at $500. */
-  function fee(amount) {
-    return Math.min(500, Math.max(1, Math.round(amount * 0.05)));
-  }
+  /* ---------------- pricing ----------------
+     Three fixed listing tiers, charged once when the lot is published.
+     We never take a percentage of the sale — see rules.html. */
+  var TIERS = {
+    basic: {
+      id: 'basic', price: 1, name: 'Basic', days: 7,
+      blurb: 'Standard listing in Browse.',
+      perks: ['Listed in Browse and category pages', '7-day auction', 'Full stats and bid history', 'Escrow-backed handover']
+    },
+    featured: {
+      id: 'featured', price: 5, name: 'Featured', days: 14,
+      blurb: 'Homepage placement and a badge.',
+      perks: ['Everything in Basic', 'Featured badge on your card', 'Homepage placement', '14-day auction', 'Included in the weekly buyer email']
+    },
+    spotlight: {
+      id: 'spotlight', price: 10, name: 'Spotlight', days: 14,
+      blurb: 'Top of Browse and the homepage hero.',
+      perks: ['Everything in Featured', 'Pinned to the top of Browse', 'Hero slot on the homepage', 'Posted to our social accounts', 'Priority verification review']
+    }
+  };
+  var TIER_ORDER = ['basic', 'featured', 'spotlight'];
+
+  function tier(id) { return TIERS[id] || TIERS.basic; }
+  function tierRank(id) { return TIER_ORDER.indexOf(tier(id).id); }
+  /* What the seller pays, total, for a listing. There is no fee on the sale itself. */
+  function listingCost(tierId) { return tier(tierId).price; }
 
   /* ---------------- queries ---------------- */
   function all() { return S.items; }
@@ -356,11 +378,13 @@
 
   function createListing(d) {
     var now = Date.now();
+    var t = tier(d.tier);
     var it = {
       id: 'lot-' + Math.floor(Math.random() * 9000 + 1000),
       title: d.title, cat: d.cat, domain: d.domain, tagline: d.tagline, about: d.about,
       start: 1, cur: 1, buyNow: Number(d.buyNow) || 0, bids: 0,
-      endsAt: now + Number(d.days) * DAY,
+      tier: t.id,
+      endsAt: now + (Number(d.days) || t.days) * DAY,
       createdAt: now, views: 0, watchers: 0, mine: true,
       seller: S.user.name, verified: false, rating: 0, sales: 0,
       mrr: Number(d.mrr) || 0, profit: Number(d.profit) || 0,
@@ -370,7 +394,7 @@
       history: []
     };
     S.items.unshift(it);
-    notify('list', 'Listing is live', it.title + ' opened at $1', 'auction.html?id=' + it.id);
+    notify('list', 'Listing is live', it.title + ' opened at $1 on the ' + t.name + ' tier', 'auction.html?id=' + it.id);
     save();
     return it;
   }
@@ -469,7 +493,10 @@
         '<button class="fav' + (isWatched(it.id) ? ' on' : '') + '" data-watch="' + it.id + '" ' +
           'aria-label="Save to watchlist" title="Save to watchlist">&#9733;</button>' +
         '<div class="card-b">' +
-          '<div class="card-cat">' + esc(it.cat) + ' &middot; ' + esc(it.domain) + '</div>' +
+          '<div class="card-cat">' +
+            (tierRank(it.tier) > 0 ? '<span class="tier-pill t-' + tier(it.tier).id + '">&#9733; ' +
+              tier(it.tier).name + '</span> ' : '') +
+            esc(it.cat) + ' &middot; ' + esc(it.domain) + '</div>' +
           '<a href="auction.html?id=' + it.id + '"><h3 class="card-t">' + esc(it.title) + '</h3></a>' +
           '<p class="card-d">' + esc(it.tagline) + '</p>' +
           '<div class="card-meta">' +
@@ -637,7 +664,8 @@
     all: all, get: get, live: live, liveItems: liveItems, stats: stats, myBids: myBids, leading: leading,
     isWatched: isWatched, toggleWatch: toggleWatch, bindWatch: bindWatch,
     bid: bid, buyNow: buyNow, setAutoBid: setAutoBid, clearAutoBid: clearAutoBid, createListing: createListing,
-    minBid: minBid, increment: increment, fee: fee,
+    minBid: minBid, increment: increment,
+    TIERS: TIERS, TIER_ORDER: TIER_ORDER, tier: tier, tierRank: tierRank, listingCost: listingCost,
     money: money, compact: compact, ago: ago, left: left, esc: esc, pad: pad,
     art: art, initials: initials, avHue: avHue, cardHTML: cardHTML,
     toast: toast, notify: notify, unread: unread, openNotes: openNotes,

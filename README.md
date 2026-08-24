@@ -33,12 +33,18 @@ Reset the demo data any time via the **Reset demo data** link in the footer.
 
 ## Fees modelled
 
-| Item | Amount |
-|---|---|
-| Listing | $1, credited back on sale |
-| Success fee | 5% of hammer price, capped at $500 |
-| Buyer's premium | none |
-| No sale | no fee, one free relist |
+Three fixed listing tiers, charged once at publish. **No commission on the sale.**
+
+| Tier | Price | What it buys |
+|---|---|---|
+| Basic | $1 | Browse listing, 7-day auction |
+| Featured | $5 | Homepage placement, badge, 14 days, weekly buyer email |
+| Spotlight | $10 | Top of Browse, homepage hero, social post, priority verification |
+| Buyer's premium | $0 | — |
+| Commission | **0%** | We take none of the hammer price |
+
+Fixed prices mean the three products map to three static Dodo product IDs — no
+variable-amount checkout, and nothing to invoice after a sale closes.
 
 ## Analytics
 
@@ -77,5 +83,6 @@ firstbid.lol. Everything here was written from scratch and deliberately diverges
 - **A working auction engine** rather than a static landing page — real bids, increments,
   history, proxy bidding, anti-snipe extensions and closing logic.
 - **Seven pages** including browse, lot detail, a listing wizard and a bidder dashboard.
-- **Its own copy, palette, layout and identity**, including the fee model (5% capped at
-  $500), escrow terms, verification tiers and valuation guidance.
+- **Its own copy, palette, layout and identity**, including the pricing model ($1/$5/$10
+  listing tiers with zero commission), escrow terms, verification tiers and valuation
+  guidance.

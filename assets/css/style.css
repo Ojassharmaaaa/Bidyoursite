@@ -129,6 +129,35 @@ section.sec{padding:66px 0}
 @keyframes blink{50%{opacity:.55}}
 .timer.done{color:var(--ink-3)}
 
+/* ---------- tiers ---------- */
+.tier-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.68rem;font-weight:800;
+  letter-spacing:.05em;margin-right:5px;vertical-align:1px}
+.tier-pill.t-featured{background:color-mix(in srgb,var(--brand) 16%,transparent);color:var(--brand)}
+.tier-pill.t-spotlight{background:linear-gradient(135deg,var(--warn),#ff5f6d);color:#fff}
+.tier-card{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:26px;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;transition:.2s;position:relative}
+.tier-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.tier-card.pick{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft),var(--shadow-lg)}
+.tier-card .tag-best{position:absolute;top:-11px;left:50%;transform:translateX(-50%);padding:4px 14px;border-radius:999px;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;font-size:.7rem;font-weight:800;
+  text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.tier-price{font-size:2.6rem;font-weight:800;font-family:var(--mono);letter-spacing:-.04em;line-height:1}
+.tier-price small{font-size:.85rem;font-family:var(--font);color:var(--ink-3);font-weight:600;letter-spacing:0}
+.tier-card h4{font-size:1.1rem;font-weight:800;margin-bottom:4px}
+.tier-card .blurb{font-size:.88rem;color:var(--ink-2);margin:10px 0 18px}
+.tier-card ul{list-style:none;display:flex;flex-direction:column;gap:9px;font-size:.88rem;color:var(--ink-2);
+  margin-bottom:20px;flex:1}
+.tier-card ul li::before{content:"\2713";color:var(--accent);font-weight:800;margin-right:8px}
+.tier-opt{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tier-opt button{text-align:left;padding:15px;border-radius:var(--radius-sm);border:1px solid var(--line);
+  background:var(--bg-soft);cursor:pointer;transition:.15s}
+.tier-opt button:hover{border-color:var(--brand)}
+.tier-opt button.on{border-color:var(--brand);background:var(--brand-soft);box-shadow:0 0 0 2px var(--brand-soft)}
+.tier-opt .p{font-size:1.35rem;font-weight:800;font-family:var(--mono);letter-spacing:-.02em}
+.tier-opt .n{font-size:.82rem;font-weight:700;margin-top:2px}
+.tier-opt .d{font-size:.75rem;color:var(--ink-3);margin-top:3px}
+@media(max-width:560px){.tier-opt{grid-template-columns:1fr}}
+
 /* ---------- filter bar ---------- */
 .filters{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:16px;
   display:flex;gap:12px;flex-wrap:wrap;align-items:center;box-shadow:var(--shadow);margin-bottom:22px}

@@ -8,7 +8,7 @@ Decisions already made:
 
 | Decision | Choice |
 |---|---|
-| Money model | Dodo Payments charges **platform fees only**; the asset sale settles through a licensed escrow partner |
+| Money model | Dodo Payments charges **listing tiers only** ($1/$5/$10, 0% commission); the asset sale settles through a licensed escrow partner |
 | Stack | Next.js (App Router) + Postgres, deployed on Vercel |
 | Delivery | This plan first, code after review |
 
@@ -34,7 +34,7 @@ one. So:
 Buyer ──pays asset price──► Escrow partner ──releases──► Seller
    │                        (licensed, holds funds)
    └──pays 0% premium
-Seller ──pays $1 listing + 5% success fee──► Dodo Payments ──► You
+Seller ──pays $1/$5/$10 listing tier──────► Dodo Payments ──► You
 ```
 
 Platform money and user money never mix. You are a venue and an invoicing party, never a
@@ -52,7 +52,7 @@ custodian.
 | Realtime | SSE from a Next route handler, Redis pub/sub behind it | Simpler than WebSockets on serverless; auctions are read-heavy |
 | Auth | Auth.js (email + password with argon2id, plus GitHub/Google OAuth) | Sessions in httpOnly cookies, not JWTs in localStorage |
 | Jobs | Vercel Cron (1-minute tick) + a durable queue for webhooks | Auction closing must not depend on any browser being open |
-| Payments | Dodo Payments (platform fees) | MoR removes tax and PCI burden |
+| Payments | Dodo Payments (listing tiers) | MoR removes tax and PCI burden |
 | Escrow | Escrow.com API, or manual handoff in v1 | Licensed custody of buyer funds |
 | Files | Vercel Blob or S3 with signed URLs | Revenue screenshots, logos |
 | Errors | Sentry | With PII scrubbing on |
@@ -78,8 +78,9 @@ sessions         id, user_id, token_hash, ip, user_agent, expires_at, revoked_at
 
 listings         id, seller_id, slug(unique), title, domain, category, tagline,
                  body_md, tech[], mrr_cents, profit_cents, traffic_monthly, asset_age,
-                 verification_tier, status(draft|pending_payment|live|closed|cancelled),
-                 listing_fee_payment_id, created_at
+                 tier(basic|featured|spotlight), verification_tier,
+                 status(draft|pending_payment|live|closed|cancelled),
+                 tier_payment_id, created_at
 
 auctions         id, listing_id(unique), starts_at, ends_at, original_ends_at,
                  start_price_cents, current_price_cents, buy_now_cents,
@@ -92,14 +93,14 @@ bids             id, auction_id, bidder_id, amount_cents, max_amount_cents,
 
 watchlist        user_id, listing_id, created_at   PK(user_id, listing_id)
 
-payments         id, user_id, dodo_payment_id(unique), purpose(listing_fee|success_fee|deposit),
+payments         id, user_id, dodo_payment_id(unique), purpose(listing_tier|upgrade|deposit),
                  amount_cents, status, raw_payload jsonb, created_at
 
 webhook_events   id, provider, webhook_id(unique), event_type, payload jsonb,
                  received_at, processed_at, attempts, last_error
 
 settlements      id, auction_id, escrow_ref, buyer_id, seller_id, amount_cents,
-                 fee_cents, status, opened_at, released_at
+                 status, opened_at, released_at
 
 audit_log        id, actor_id, action, subject_type, subject_id, before jsonb,
                  after jsonb, ip_hash, created_at        -- append-only
@@ -323,12 +324,21 @@ Analytics is cookieless, which keeps this simple.
 
 ### 6.1 What gets charged
 
-| Purpose | When | Amount |
-|---|---|---|
-| Listing fee | Seller publishes | $1, credited back on sale |
-| Success fee | Auction closes with a winner | 5% of hammer price, capped at $500 |
-| Bidder deposit | Before bidding on high-value lots | Refundable, threshold-based |
-| Verification / Pro seller | Optional subscription | Recurring |
+| Purpose | When | Amount | Dodo product |
+|---|---|---|---|
+| Basic listing | Seller publishes | $1 | static ID |
+| Featured listing | Seller publishes | $5 | static ID |
+| Spotlight listing | Seller publishes | $10 | static ID |
+| Bidder deposit | Before bidding on high-value lots | Refundable, threshold-based | static ID |
+
+**There is no success fee and no commission.** Three fixed prices means three static
+`product_id` values in the checkout call — no variable amounts, no per-invoice product
+creation, and critically nothing to collect *after* a sale, when the seller has already
+been paid by escrow and has no incentive to settle up. Charging at publish time is the
+single biggest simplification in this design.
+
+Revenue is therefore volume-driven: 500 listings a month at an average $3 tier is ~$1,500
+MRR. Model the tier mix before assuming the numbers work.
 
 ### 6.2 Flow (one-time payment)
 
@@ -375,23 +385,13 @@ Non-negotiables around that call:
   and re-derive amounts from your own records, not from the payload.
 - Alert on `attempts > 3` or any event unprocessed for 15 minutes.
 
-### 6.4 Open question to verify before building
+### 6.4 Tier changes and upgrades
 
-The success fee is a **variable amount** (5% of a hammer price), but Dodo's checkout takes
-`product_cart` entries of `product_id` + `quantity`. Three possible routes, in order of
-preference:
-
-1. A dedicated variable-price product, if Dodo supports one — needs confirming in the
-   dashboard.
-2. Creating a product per invoice via the API at settlement time.
-3. A `$1` unit product with `quantity` = fee in dollars — works, but produces an ugly
-   receipt and rounds to whole dollars.
-
-I'd resolve this with Dodo support before writing the billing module, rather than build on
-an assumption. Same question applies to refunding the $1 listing fee — issuing an account
-credit is very likely simpler than a real refund.
-
----
+A seller upgrading Basic → Featured mid-auction is a second checkout against the upgrade
+product, fulfilled on its own `payment.succeeded`. Placement flags are derived from the
+`listings.tier` column, which only ever advances on a paid webhook — never from a client
+request. Downgrades are not offered; refunds are handled case by case through Dodo's
+dashboard.
 
 ## 7. Settlement and escrow
 
@@ -403,8 +403,9 @@ On auction close:
 3. Buyer funds escrow. Seller transfers domain, repo, hosting, analytics, payment processor
    and mailing list against a checklist in the app.
 4. Buyer accepts, or the inspection window expires → escrow releases to seller.
-5. Your success fee is invoiced separately through Dodo. It is **not** deducted from escrow —
-   that would put you in the flow of funds, which is exactly what this design avoids.
+5. Nothing is deducted from escrow. You were paid at listing time, so you never sit in the
+   flow of funds between buyer and seller — which is exactly what keeps you out of
+   money-transmitter scope.
 
 Dispute handling is a documented human process with a policy page, not code. Write the
 policy before launch; you will need it in week one.
@@ -437,7 +438,7 @@ Rough solo-developer estimates; treat as relative sizing, not commitments.
 | 1 | Next.js scaffold, Postgres, Drizzle, Auth.js, sessions, security headers, CI with lint/typecheck/secret-scan | ~1 wk |
 | 2 | Listings CRUD, browse/search/filter, image uploads, port the design system | ~1 wk |
 | 3 | **Bidding engine**: transactional bids, proxy resolution, anti-snipe, closing cron, SSE realtime, notifications | ~1.5 wk |
-| 4 | Dodo integration: checkout sessions, webhook endpoint with verification + dedupe, listing/success fees, receipts | ~1 wk |
+| 4 | Dodo integration: checkout sessions for the three tiers, webhook endpoint with verification + dedupe, receipts, upgrades | ~1 wk |
 | 5 | Settlement + escrow partner, transfer checklist, dispute states | ~1–1.5 wk |
 | 6 | Trust & safety: verification tiers, shill detection, deposits, admin/moderation console, audit views | ~1 wk |
 | 7 | Hardening: load test the bid path, third-party pen test, backup/restore drill, runbooks, staged launch | ~1 wk |
@@ -463,8 +464,8 @@ hundreds of simultaneous bids and asserts exactly one winner and a monotonic pri
 
 To get live sooner, in the order I'd drop them: multi-currency, subscriptions/Pro tiers,
 mobile apps, buy-now on every lot, public seller profiles with review history, and the
-automated escrow integration (phase 5 can start as a documented manual handoff with the
-success fee invoiced through Dodo).
+automated escrow integration (phase 5 can start as a documented manual handoff — you are
+already paid by then, so this is far less risky than it would be under a success-fee model).
 
 What cannot be cut: server-authoritative bidding, webhook signature verification with
 deduplication, authorisation checks on every route, the audit log, and 2FA before payout.

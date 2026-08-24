@@ -1,0 +1,12 @@
+{
+  "name": "bidyoursite",
+  "version": "1.0.0",
+  "description": "BidYourSite - auction your website, domain or app from $1",
+  "scripts": {
+    "install-analytics": "npm install"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.3.1"
+  },
+  "private": true
+}

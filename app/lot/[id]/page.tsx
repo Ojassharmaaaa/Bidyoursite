@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getLot, upNext } from '@/lib/drops';
 import { bidHistory } from '@/lib/queries';
 import { money, compact, rarityFor, tier } from '@/lib/money';
+import { absolute, SITE_NAME } from '@/lib/site';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,15 +13,26 @@ export async function generateMetadata(
   const { id } = await params;
   const lot = await getLot(Number(id));
   if (!lot) return { title: 'Lot not found — BidYourSite' };
+  const card = absolute(`/api/card/${lot.listing_id}`);
+  const url = absolute(`/lot/${lot.listing_id}`);
   return {
-    title: `${lot.title} — BidYourSite`,
+    title: lot.title,
     description: lot.tagline,
+    alternates: { canonical: `/lot/${lot.listing_id}` },
     openGraph: {
       title: lot.title,
       description: lot.tagline,
-      images: [{ url: `/api/card/${lot.listing_id}`, width: 800, height: 1120 }],
+      url,
+      siteName: SITE_NAME,
+      type: 'article',
+      images: [{ url: card, width: 800, height: 1120, alt: `${lot.title} stat card` }],
     },
-    twitter: { card: 'summary_large_image', images: [`/api/card/${lot.listing_id}`] },
+    twitter: {
+      card: 'summary_large_image',
+      title: lot.title,
+      description: lot.tagline,
+      images: [card],
+    },
   };
 }
 
@@ -154,9 +166,24 @@ export default async function LotPage({ params }: { params: Promise<{ id: string
                 width={340}
                 height={476}
               />
-              <a className="btn btn-g btn-sm" href={`/api/card/${lot.listing_id}`} target="_blank">
-                Open full size
-              </a>
+              <div className="card-actions">
+                <a className="btn btn-g btn-sm" href={`/api/card/${lot.listing_id}`} target="_blank">
+                  Open full size
+                </a>
+                <a
+                  className="btn btn-g btn-sm"
+                  target="_blank"
+                  rel="noreferrer"
+                  href={
+                    'https://x.com/intent/tweet?text=' +
+                    encodeURIComponent(`${lot.title} — on the block at BidYourSite, opened at $1`) +
+                    '&url=' +
+                    encodeURIComponent(absolute(`/lot/${lot.listing_id}`))
+                  }
+                >
+                  Share on X
+                </a>
+              </div>
             </div>
           </div>
         </aside>

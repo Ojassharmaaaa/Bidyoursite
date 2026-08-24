@@ -1,18 +1,38 @@
 import type { Metadata } from 'next';
 import { Analytics } from '@vercel/analytics/next';
 import { currentUser } from '@/lib/auth';
+import { SITE_URL, SITE_NAME, SITE_TAGLINE } from '@/lib/site';
 import '../assets/css/style.css';
 import './stage.css';
 
+const DESCRIPTION =
+  'A home for abandoned side projects. One website, domain, newsletter or app goes up at a time, opens at $1, and the room decides what it is worth.';
+
 export const metadata: Metadata = {
-  title: 'BidYourSite — one project on the block at a time',
-  description:
-    'A home for abandoned side projects. One website, domain, newsletter or app goes up at a time, opens at $1, and the room decides what it is worth.',
-  openGraph: {
-    title: 'BidYourSite',
-    description: 'One project on the block at a time. Opens at $1.',
-    type: 'website',
+  // Every relative image path below resolves against this, which is what makes
+  // the generated trading cards work as OG images on X, Slack and Discord.
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME + ' — ' + SITE_TAGLINE,
+    template: '%s · ' + SITE_NAME,
   },
+  description: DESCRIPTION,
+  applicationName: SITE_NAME,
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: SITE_NAME,
+    description: DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_NAME,
+    description: SITE_TAGLINE,
+  },
+  robots: { index: true, follow: true },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

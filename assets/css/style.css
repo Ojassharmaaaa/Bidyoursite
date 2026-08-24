@@ -158,6 +158,20 @@ section.sec{padding:66px 0}
 .tier-opt .d{font-size:.75rem;color:var(--ink-3);margin-top:3px}
 @media(max-width:560px){.tier-opt{grid-template-columns:1fr}}
 
+/* ---------- tier sections (browse) ---------- */
+.tier-sec{margin-bottom:38px}
+.group-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:12px;
+  border-bottom:1px solid var(--line)}
+.group-head h2{display:flex;align-items:baseline;gap:9px;font-size:1.5rem;font-weight:800;
+  letter-spacing:-.03em;font-family:var(--mono)}
+.group-head h2 span{font-family:var(--font);font-size:.82rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3)}
+.group-n{margin-left:auto;font-size:.83rem;color:var(--ink-3);font-weight:600}
+.tier-sec.t-spotlight .group-head{border-bottom-color:color-mix(in srgb,var(--warn) 55%,transparent)}
+.tier-sec.t-spotlight .group-head h2{color:var(--warn)}
+.tier-sec.t-featured .group-head{border-bottom-color:color-mix(in srgb,var(--brand) 45%,transparent)}
+.tier-sec.t-featured .group-head h2{color:var(--brand)}
+
 /* ---------- filter bar ---------- */
 .filters{background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);padding:16px;
   display:flex;gap:12px;flex-wrap:wrap;align-items:center;box-shadow:var(--shadow);margin-bottom:22px}

@@ -235,18 +235,18 @@
   var TIERS = {
     basic: {
       id: 'basic', price: 1, name: 'Basic', days: 7,
-      blurb: 'Standard listing in Browse.',
-      perks: ['Listed in Browse and category pages', '7-day auction', 'Full stats and bid history', 'Escrow-backed handover']
+      blurb: 'Listed in the $1 section.',
+      perks: ['Your lot sits in the $1 section of Browse', '7-day auction', 'Full stats and bid history', 'Escrow-backed handover']
     },
     featured: {
       id: 'featured', price: 5, name: 'Featured', days: 14,
-      blurb: 'Homepage placement and a badge.',
-      perks: ['Everything in Basic', 'Featured badge on your card', 'Homepage placement', '14-day auction', 'Included in the weekly buyer email']
+      blurb: 'Own section above every $1 lot.',
+      perks: ['Your own $5 section, above every $1 lot', 'Featured badge on your card', 'Homepage placement', '14-day auction', 'Included in the weekly buyer email']
     },
     spotlight: {
       id: 'spotlight', price: 10, name: 'Spotlight', days: 14,
-      blurb: 'Top of Browse and the homepage hero.',
-      perks: ['Everything in Featured', 'Pinned to the top of Browse', 'Hero slot on the homepage', 'Posted to our social accounts', 'Priority verification review']
+      blurb: 'The top section, above everything.',
+      perks: ['The $10 section sits above every other lot', 'Hero slot on the homepage', 'Featured badge on your card', 'Posted to our social accounts', 'Priority verification review']
     }
   };
   var TIER_ORDER = ['basic', 'featured', 'spotlight'];

@@ -388,9 +388,10 @@ Non-negotiables around that call:
 ### 6.4 Tier changes and upgrades
 
 A seller upgrading Basic → Featured mid-auction is a second checkout against the upgrade
-product, fulfilled on its own `payment.succeeded`. Placement flags are derived from the
-`listings.tier` column, which only ever advances on a paid webhook — never from a client
-request. Downgrades are not offered; refunds are handled case by case through Dodo's
+product, fulfilled on its own `payment.succeeded`. Placement is derived from the `listings.tier` column, which only ever
+advances on a paid webhook — never from a client request. Browse queries group by tier
+(`ORDER BY tier_rank DESC, <requested sort>`), so the section a lot appears in is a
+function of a settled payment and nothing else. Downgrades are not offered; refunds are handled case by case through Dodo's
 dashboard.
 
 ## 7. Settlement and escrow

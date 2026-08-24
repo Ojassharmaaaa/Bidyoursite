@@ -37,9 +37,13 @@ Three fixed listing tiers, charged once at publish. **No commission on the sale.
 
 | Tier | Price | What it buys |
 |---|---|---|
-| Basic | $1 | Browse listing, 7-day auction |
-| Featured | $5 | Homepage placement, badge, 14 days, weekly buyer email |
-| Spotlight | $10 | Top of Browse, homepage hero, social post, priority verification |
+| Basic | $1 | The $1 section of Browse, 7-day auction |
+| Featured | $5 | Its own $5 section above all $1 lots, badge, homepage placement, 14 days |
+| Spotlight | $10 | The top $10 section, homepage hero, social post, priority verification |
+
+Browse is grouped into tier sections — $10, then $5, then $1. Ordering *within* a section
+is whatever sort the buyer picked, so paid placement never quietly rewrites a requested
+sort.
 | Buyer's premium | $0 | — |
 | Commission | **0%** | We take none of the hammer price |
 

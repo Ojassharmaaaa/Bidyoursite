@@ -1,92 +1,142 @@
 # BidYourSite
 
-An auction marketplace for small internet businesses. Every lot — website, domain,
-newsletter, app, store or community — opens at **$1** and the market decides the rest.
+**One project on the block at a time.** A home for abandoned side projects —
+websites, domains, newsletters, apps, stores. Every lot opens at **$1**, one holds
+the stage at a time, and the room decides what it is worth.
 
-Static site: plain HTML, CSS and vanilla JS. No build step, no dependencies, no backend.
-All auction state (bids, watchlist, listings, notifications) persists in `localStorage`.
+Next.js 15 (App Router) + Postgres. Bidding is server-authoritative: the client is
+treated as hostile and every rule is enforced inside a database transaction.
 
 ---
 
-## Pages
+## The format
 
-| File | Contents |
+- **The Drop** — exactly one auction is live at any moment, enforced by a partial
+  unique index in Postgres, not by application hope. Everything else waits in a queue
+  and is promoted automatically when the stage clears.
+- **The confession** — every listing must answer *"why are you selling?"* in at least
+  40 characters, and it sits above the metrics. A spec sheet hides why a project
+  stalled; a straight answer is what makes the numbers believable.
+- **Trading cards** — each lot gets a generated stat card (`/api/card/[id]`) with
+  rarity derived from monthly revenue. It doubles as the OG image.
+- **Live stage** — watcher count, scrolling bid feed, price-bump animation, and an
+  `EXTENDED +2:00` slam when a late bid pushes the clock.
+
+## Bidding rules
+
+| Rule | Behaviour |
 |---|---|
-| `index.html` | Hero, live stat counters, price ticker, ending-soon and hot grids, category tiles, how-it-works, fee calculator |
-| `auctions.html` | Browse: search, category chips, 6 sort modes, status filters (watchlist / verified / revenue-generating), budget bands |
-| `auction.html` | Lot detail: countdown, bid box, quick-bid, auto-bid, buy-now, bid history, metrics, seller card, similar lots |
-| `sell.html` | 3-step listing wizard with live card preview, valuation guide, payout breakdown |
-| `dashboard.html` | Active bids, watchlist, my listings, won & lost, activity feed |
-| `rules.html` | Increments, anti-snipe, escrow timeline, fees, prohibited listings, FAQ |
-| `about.html` | Story, principles, track record, caveats |
+| Opening price | $1, no reserves |
+| Increments | $5 under $100 · $10 to $500 · $25 to $2k · $50 to $10k · $100 above |
+| Proxy bidding | You name a ceiling; the engine bids the minimum needed |
+| Your ceiling | Never sent to any client, ever |
+| Anti-snipe | A bid inside the final 2 minutes extends the clock by 2 minutes |
+| Own lot | Sellers are blocked from bidding on themselves |
+| Closing | A cron sweep, plus a read-time guard so a late cron cannot let a bid through |
 
-## Auction engine — `assets/js/app.js`
+## Pricing
 
-- **Sliding bid increments** — $5 under $100, scaling to $100 above $10k.
-- **Proxy / auto-bidding** — arm a ceiling; the engine bids the minimum needed and stops at your max.
-- **Anti-snipe clock** — a bid inside the final 2 minutes extends the auction by 2 minutes, repeatably.
-- **Simulated rival bidders** — a 5-second tick moves prices, weighted by bid count and time remaining.
-- **Notifications** — outbid, extended, won, listed; unread badge in the header.
-- **Watchlist**, buy-now, toasts, dark/light theme, responsive nav.
+Three fixed tiers, charged once for a queue position. **No commission on the sale.**
 
-Reset the demo data any time via the **Reset demo data** link in the footer.
-
-## Fees modelled
-
-Three fixed listing tiers, charged once at publish. **No commission on the sale.**
-
-| Tier | Price | What it buys |
+| Tier | Price | Buys |
 |---|---|---|
-| Basic | $1 | The $1 section of Browse, 7-day auction |
-| Featured | $5 | Its own $5 section above all $1 lots, badge, homepage placement, 14 days |
-| Spotlight | $10 | The top $10 section, homepage hero, social post, priority verification |
+| Basic | $1 | A place in the queue, 7-day cap |
+| Featured | $5 | Jumps the queue, badge, homepage placement, 14-day cap |
+| Spotlight | $10 | Front of the queue, homepage hero, social post, priority verification |
 
-Browse is grouped into tier sections — $10, then $5, then $1. Ordering *within* a section
-is whatever sort the buyer picked, so paid placement never quietly rewrites a requested
-sort.
-| Buyer's premium | $0 | — |
-| Commission | **0%** | We take none of the hammer price |
+Payments are Phase 4 (Dodo Payments) — see `ARCHITECTURE.md`. Listings are currently
+free to queue.
 
-Fixed prices mean the three products map to three static Dodo product IDs — no
-variable-amount checkout, and nothing to invoice after a sale closes.
+---
 
-## Analytics
+## Running it
 
-Every page carries the framework-free Vercel Web Analytics snippet:
+You need a Postgres database. [Neon](https://neon.tech) and
+[Supabase](https://supabase.com) both have a free tier; either works.
 
-```html
-<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
-<script defer src="/_vercel/insights/script.js"></script>
+**1. Create `.env.local`** in the project root:
+
+```
+DATABASE_URL=postgres://user:password@host/dbname?sslmode=require
+SESSION_SECRET=some-long-random-string
+CRON_SECRET=another-long-random-string
 ```
 
-`/_vercel/insights/script.js` only resolves once deployed on Vercel, and Web Analytics
-must be enabled in the project dashboard before data is collected.
-
-## Running locally
+Generate the secrets with:
 
 ```bash
-python -m http.server 8777
+node -e "console.log(crypto.randomUUID()+crypto.randomUUID())"
 ```
 
-Then open <http://127.0.0.1:8777>. Any static server works — there is nothing to compile.
+**2. Create the schema and seed a demo room:**
+
+```bash
+npm run db:migrate && npm run db:seed
+```
+
+**3. Start it:**
+
+```bash
+npm run dev
+```
+
+The seed prints demo accounts you can sign in with. One lot starts live on the stage
+and the rest sit in the queue.
+
+## Testing the bidding engine
+
+The engine is the part that must never be wrong, so it has its own harness. With the
+dev server running:
+
+```bash
+npm run test:bidding
+```
+
+It fires 30 simultaneous bids at a live lot and asserts: exactly one leader, the price
+never goes backwards, no two bids share an amount, the leader holds the highest
+ceiling, the price never exceeds that ceiling, sellers cannot bid on their own lot,
+sub-minimum bids are refused, and no ceiling leaks through the public API.
 
 ## Deploying
 
-Import the repo on Vercel and deploy as a static site (no framework preset, no build
-command, output directory `.`). Then enable Analytics in the project settings.
+Import the repo on Vercel. It auto-detects Next.js — no build settings to change. Then:
+
+- Add `DATABASE_URL`, `SESSION_SECRET` and `CRON_SECRET` in project settings.
+- Point `DATABASE_URL` at a **pooled** connection string (Neon pooled endpoint or
+  Supabase pgbouncer), not the direct one.
+- `vercel.json` registers a cron on `/api/cron/close` every minute. It closes finished
+  lots and promotes the next from the queue.
+- Enable Web Analytics in the Analytics tab.
+
+## Layout
+
+```
+app/            pages and route handlers
+  page.tsx      the stage — live lot, queue, hall of fame
+  Stage.tsx     client component: polling, countdown, bid form, feed
+  lot/[id]/     permalink for any lot, past or queued
+  api/          bid · auth · listings · stage · card · cron
+src/lib/
+  bidding.ts    placeBid transaction, closeDueAuctions
+  drops.ts      the queue, promotion, presence
+  money.ts      increments, tiers, rarity — the only price definitions
+  card.ts       trading-card SVG
+  auth.ts       scrypt hashing, opaque sessions, origin checks
+src/db/
+  schema.sql    the whole schema, idempotent
+demo/           the original static prototype, kept for reference
+```
+
+`demo/` is the old localStorage prototype. It is no longer wired up — kept only
+because the design system in `assets/css/style.css` is shared with the live app.
 
 ---
 
 ## Note on originality
 
 The concept — a marketplace where listings open at a single dollar — was inspired by
-firstbid.lol. Everything here was written from scratch and deliberately diverges:
-
-- **Different asset class.** Websites, domains, newsletters, apps, stores and communities
-  rather than generic products, with revenue, profit, traffic and stack shown per lot.
-- **A working auction engine** rather than a static landing page — real bids, increments,
-  history, proxy bidding, anti-snipe extensions and closing logic.
-- **Seven pages** including browse, lot detail, a listing wizard and a bidder dashboard.
-- **Its own copy, palette, layout and identity**, including the pricing model ($1/$5/$10
-  listing tiers with zero commission), escrow terms, verification tiers and valuation
-  guidance.
+firstbid.lol, and the minimal three-page shape echoes theirs. Everything here was
+written from scratch and diverges in the parts that matter: the one-lot-at-a-time
+format, the required seller confession, generated trading cards, real server-side
+proxy bidding with anti-snipe, and the $1/$5/$10 queue-position pricing with zero
+commission.

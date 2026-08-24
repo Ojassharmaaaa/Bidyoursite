@@ -1,12 +1,26 @@
 {
   "name": "bidyoursite",
-  "version": "1.0.0",
-  "description": "BidYourSite - auction your website, domain or app from $1",
+  "version": "2.0.0",
+  "description": "BidYourSite \u2014 auction your website, domain or app from $1",
+  "private": true,
   "scripts": {
-    "install-analytics": "npm install"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
+    "db:seed": "node --env-file=.env.local scripts/seed.mjs",
+    "test:bidding": "node --env-file=.env.local scripts/test-bidding.mjs"
   },
   "dependencies": {
-    "@vercel/analytics": "^1.3.1"
+    "@vercel/analytics": "^1.3.1",
+    "next": "^15.1.0",
+    "postgres": "^3.4.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
-  "private": true
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.0"
+  }
 }

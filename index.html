@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BidYourSite — auction your website, domain or app from $1</title>
+<meta name="description" content="List your website, domain, newsletter or app for $1 and let the market decide what it is worth. Live auctions, proxy bidding and escrow-backed handover.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234f39f6'/><text x='50' y='72' font-size='64' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>B</text></svg>">
+<script src="assets/js/app.js"></script>
+</head>
+<body>
+<header data-chrome="header"></header>
+
+<!-- ============ hero ============ -->
+<section class="hero">
+  <div class="wrap hero-in">
+    <span class="pill"><span class="pulse"></span><span id="liveLine">Loading live auctions…</span></span>
+    <h1 class="hero-t">Your side project has<br>a <span class="grad">market price</span>.</h1>
+    <p class="hero-s">List a website, domain, newsletter or app for <strong>$1</strong> — no valuation calls, no brokers, no 15% commission. Real buyers bid it up to whatever it is actually worth.</p>
+    <div class="hero-cta">
+      <a class="btn btn-p btn-lg" href="sell.html">List my site for $1</a>
+      <a class="btn btn-g btn-lg" href="auctions.html">Browse live auctions</a>
+    </div>
+    <p class="hero-note">Flat 5% success fee, capped at $500 · Escrow-backed handover · No fee if it does not sell</p>
+    <div class="stats" id="stats"></div>
+  </div>
+</section>
+
+<!-- ============ ticker ============ -->
+<div class="ticker"><div class="ticker-t" id="ticker"></div></div>
+
+<!-- ============ ending soon ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Closing next</div>
+        <h2>Ending soon</h2>
+        <p>The clock extends by two minutes on any late bid, so snipers gain nothing here.</p>
+      </div>
+      <a class="btn btn-g" href="auctions.html?sort=ending">See all</a>
+    </div>
+    <div class="grid" id="ending"></div>
+  </div>
+</section>
+
+<!-- ============ categories ============ -->
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Browse</div>
+        <h2>What is on the block</h2>
+        <p>Seven asset classes, one starting price.</p>
+      </div>
+    </div>
+    <div class="grid" id="cats" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))"></div>
+  </div>
+</section>
+
+<!-- ============ hot lots ============ -->
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Most contested</div>
+        <h2>Hot right now</h2>
+        <p>Lots taking the most bids in the last stretch.</p>
+      </div>
+      <a class="btn btn-g" href="auctions.html?sort=bids">See all</a>
+    </div>
+    <div class="grid" id="hot"></div>
+  </div>
+</section>
+
+<!-- ============ how it works ============ -->
+<section class="sec" style="background:var(--bg-soft);border-block:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head" style="justify-content:center;text-align:center">
+      <div>
+        <div class="kicker">How it works</div>
+        <h2>Four steps from listing to payout</h2>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><h4>List for a dollar</h4>
+        <p>Describe the asset, attach your revenue and traffic numbers, pick a run time from 1 to 14 days. Opening price is always $1.</p></div>
+      <div class="step"><div class="step-n">2</div><h4>Get verified</h4>
+        <p>Connect Stripe, Plausible or a screen-shared dashboard. Verified lots earn a badge and historically close 2.4&times; higher.</p></div>
+      <div class="step"><div class="step-n">3</div><h4>Let it run</h4>
+        <p>Buyers bid openly with proxy limits. Anti-snipe extensions mean the price reflects demand, not reflexes.</p></div>
+      <div class="step"><div class="step-n">4</div><h4>Escrow and hand over</h4>
+        <p>Funds sit in escrow while the domain, code and accounts transfer. Payout lands within 48 hours of buyer sign-off.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ why different ============ -->
+<section class="sec">
+  <div class="wrap split">
+    <div>
+      <div class="kicker">Why bother</div>
+      <h2 style="font-size:clamp(1.7rem,3.6vw,2.2rem);letter-spacing:-.03em;margin:10px 0 16px">Brokers take 15%. We take 5%, capped.</h2>
+      <p style="color:var(--ink-2);margin-bottom:18px">A marketplace listing should not cost more than the asset earns in a month. Our fee is a flat 5% of the hammer price with a hard $500 ceiling — sell a $40,000 SaaS and you still pay $500.</p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
+        <li>&#10003; &nbsp;<strong>No listing fee beyond $1</strong> — and the dollar is credited back if the lot sells.</li>
+        <li>&#10003; &nbsp;<strong>Proxy bidding</strong> — set a ceiling, walk away, the system bids for you in increments.</li>
+        <li>&#10003; &nbsp;<strong>Anti-snipe clock</strong> — bids inside the last 2 minutes extend the auction.</li>
+        <li>&#10003; &nbsp;<strong>Reserve-free by design</strong> — everything opens at $1, so listings actually attract bidders.</li>
+        <li>&#10003; &nbsp;<strong>Escrow on every sale</strong> — nobody transfers a domain on a promise.</li>
+      </ul>
+      <a class="btn btn-p btn-lg" href="sell.html" style="margin-top:26px">Start a $1 listing</a>
+    </div>
+    <div class="panel">
+      <h3>Fee calculator</h3>
+      <label class="lb">Expected hammer price</label>
+      <input class="fld" type="range" id="feeRange" min="100" max="40000" step="100" value="4200">
+      <div style="display:flex;justify-content:space-between;margin-top:14px" class="rows">
+        <div style="flex:1">
+          <div class="rows">
+            <div class="row"><span>Hammer price</span><span id="fpHammer">$4,200</span></div>
+            <div class="row"><span>BidYourSite fee (5%, max $500)</span><span id="fpFee">$210</span></div>
+            <div class="row"><span>Escrow handling</span><span>$0</span></div>
+            <div class="row"><span><strong>You receive</strong></span><span id="fpNet" style="color:var(--accent);font-size:1.1rem">$3,990</span></div>
+            <div class="row"><span>A 15% broker would keep</span><span id="fpBroker" style="color:var(--danger)">$630</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:16px">Sellers keep <b id="fpPct">95%</b> of the hammer price on this lot.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ cta ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="panel" style="text-align:center;padding:52px 28px;background:linear-gradient(135deg,var(--brand),var(--brand-2));border:none;color:#fff">
+      <h2 style="font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:-.03em;margin-bottom:12px">Sitting on a project you stopped shipping?</h2>
+      <p style="opacity:.9;max-width:520px;margin:0 auto 24px">Someone out there wants to run it. Put it on the block for a dollar and find out what it is worth.</p>
+      <a class="btn btn-lg" href="sell.html" style="background:#fff;color:var(--brand)">List it in 3 minutes</a>
+    </div>
+  </div>
+</section>
+
+<footer data-chrome="footer"></footer>
+
+<script>
+document.addEventListener('bys:ready', function () {
+  var $ = function (s) { return document.querySelector(s); };
+
+  function paintStats() {
+    var s = BYS.stats();
+    $('#stats').innerHTML = [
+      ['#00c48c', s.liveCount, 'Live auctions'],
+      ['', BYS.money(s.volume), 'Volume bid'],
+      ['', s.totalBids, 'Bids placed'],
+      ['', s.sellers, 'Active sellers']
+    ].map(function (r) {
+      return '<div class="stat"><div class="stat-v"' + (r[0] ? ' style="color:' + r[0] + '"' : '') + '>' + r[1] + '</div>' +
+             '<div class="stat-l">' + r[2] + '</div></div>';
+    }).join('');
+    $('#liveLine').textContent = s.liveCount + ' auctions live · ' + BYS.money(s.volume) + ' bid to date';
+  }
+
+  function paintTicker() {
+    var rows = BYS.all().slice(0, 10).map(function (it) {
+      return '<span><b>' + BYS.esc(it.domain) + '</b> ' + BYS.money(it.cur) + ' · ' + it.bids + ' bids</span>';
+    }).join('');
+    $('#ticker').innerHTML = rows + rows;
+  }
+
+  function paintGrids() {
+    var liveOnes = BYS.liveItems();
+    var ending = liveOnes.slice().sort(function (a, b) { return a.endsAt - b.endsAt; }).slice(0, 6);
+    var hot = liveOnes.slice().sort(function (a, b) { return b.bids - a.bids; }).slice(0, 3);
+    $('#ending').innerHTML = ending.map(BYS.cardHTML).join('');
+    $('#hot').innerHTML = hot.map(BYS.cardHTML).join('');
+    BYS.bindWatch();
+    BYS.timers();
+  }
+
+  function paintCats() {
+    var counts = {};
+    BYS.liveItems().forEach(function (i) { counts[i.cat] = (counts[i.cat] || 0) + 1; });
+    var icons = { SaaS: '&#9881;', Newsletter: '&#9993;', Domain: '&#127760;', 'E-commerce': '&#128722;',
+      'Content Site': '&#128196;', 'Mobile App': '&#128241;', Community: '&#128101;' };
+    $('#cats').innerHTML = BYS.CATS.map(function (c, i) {
+      return '<a class="step" href="auctions.html?cat=' + encodeURIComponent(c) + '" style="padding:20px">' +
+        '<div style="font-size:1.7rem;margin-bottom:8px">' + (icons[c] || '&#9679;') + '</div>' +
+        '<h4 style="font-size:.98rem">' + c + '</h4>' +
+        '<p style="font-size:.84rem">' + (counts[c] || 0) + ' live</p></a>';
+    }).join('');
+  }
+
+  // fee calculator
+  var r = $('#feeRange');
+  function paintFee() {
+    var v = Number(r.value), f = BYS.fee(v);
+    $('#fpHammer').textContent = BYS.money(v);
+    $('#fpFee').textContent = BYS.money(f);
+    $('#fpNet').textContent = BYS.money(v - f);
+    $('#fpBroker').textContent = BYS.money(v * 0.15);
+    $('#fpPct').textContent = Math.round((v - f) / v * 100) + '%';
+  }
+  r.addEventListener('input', paintFee);
+  paintFee();
+
+  function all() { paintStats(); paintGrids(); paintCats(); paintTicker(); }
+  all();
+  document.addEventListener('bys:update', function () { paintStats(); paintGrids(); });
+});
+</script>
+
+<!-- Vercel Web Analytics -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

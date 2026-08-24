@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — BidYourSite</title>
+<meta name="description" content="Track your bids, watchlist, listings and auction activity in one place.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234f39f6'/><text x='50' y='72' font-size='64' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>B</text></svg>">
+<script src="assets/js/app.js"></script>
+</head>
+<body>
+<header data-chrome="header"></header>
+
+<div class="wrap pg-head">
+  <h1>Your dashboard</h1>
+  <p>Everything you are bidding on, watching or selling. Prices refresh live as rivals move.</p>
+</div>
+
+<div class="wrap" style="padding-top:24px;padding-bottom:70px">
+  <div class="stats" id="mystats" style="margin-top:0;margin-bottom:30px"></div>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="bids">Active bids</button>
+    <button class="tab" data-tab="watch">Watchlist</button>
+    <button class="tab" data-tab="listings">My listings</button>
+    <button class="tab" data-tab="won">Won &amp; lost</button>
+    <button class="tab" data-tab="activity">Activity</button>
+  </div>
+
+  <div id="body"></div>
+</div>
+
+<footer data-chrome="footer"></footer>
+
+<script>
+document.addEventListener('bys:ready', function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var tab = 'bids';
+
+  function empty(icon, head, sub, cta) {
+    return '<div class="empty"><div class="ic">' + icon + '</div><h4>' + head + '</h4><p>' + sub + '</p>' +
+      (cta ? '<a class="btn btn-p" style="margin-top:16px" href="' + cta[1] + '">' + cta[0] + '</a>' : '') + '</div>';
+  }
+
+  function grid(items, ico, head, sub, cta) {
+    if (!items.length) return empty(ico, head, sub, cta);
+    return '<div class="grid">' + items.map(BYS.cardHTML).join('') + '</div>';
+  }
+
+  function myStats() {
+    var bidding = BYS.myBids().filter(BYS.live);
+    var leadCount = bidding.filter(BYS.leading).length;
+    var exposure = bidding.filter(BYS.leading).reduce(function (a, i) { return a + i.cur; }, 0);
+    var mine = BYS.all().filter(function (i) { return i.seller === BYS.state.user.name; });
+    $('#mystats').innerHTML = [
+      [bidding.length, 'Active bids'],
+      [leadCount + ' / ' + bidding.length, 'Currently leading'],
+      [BYS.money(exposure), 'Committed if won'],
+      [mine.length, 'Your listings']
+    ].map(function (r) {
+      return '<div class="stat"><div class="stat-v">' + r[0] + '</div><div class="stat-l">' + r[1] + '</div></div>';
+    }).join('');
+  }
+
+  function bidsTable() {
+    var rows = BYS.myBids().filter(BYS.live);
+    if (!rows.length) return empty('&#128176;', 'No active bids', 'Find something worth owning and open the bidding.', ['Browse auctions', 'auctions.html']);
+    return '<div class="panel" style="padding:8px">' + rows.map(function (it) {
+      var lead = BYS.leading(it);
+      var mine = it.history.filter(function (h) { return h.by === 'you'; })[0];
+      var cap = BYS.state.autobids[it.id];
+      return '<a class="hist-i" href="auction.html?id=' + it.id + '" style="padding:14px">' +
+        '<div class="av" style="width:44px;height:44px;border-radius:11px;' + BYS.art(it.hue) + '">' + BYS.esc(BYS.initials(it.domain)) + '</div>' +
+        '<div class="hist-m"><div class="hist-n">' + BYS.esc(it.title) + '</div>' +
+        '<div class="hist-t">Your bid ' + BYS.money(mine.amt) + ' · now ' + BYS.money(it.cur) +
+        (cap ? ' · auto up to ' + BYS.money(cap) : '') + '</div></div>' +
+        '<div style="text-align:right">' +
+          '<div style="font-weight:700;font-size:.86rem;color:' + (lead ? 'var(--accent)' : 'var(--danger)') + '">' +
+            (lead ? 'Leading' : 'Outbid') + '</div>' +
+          '<div class="timer" data-ends="' + it.endsAt + '" style="margin-top:4px;display:inline-block"></div>' +
+        '</div></a>';
+    }).join('') + '</div>';
+  }
+
+  function listings() {
+    var mine = BYS.all().filter(function (i) { return i.seller === BYS.state.user.name; });
+    if (!mine.length) return empty('&#128228;', 'You have not listed anything', 'It costs a dollar to find out what your project is worth.', ['List for $1', 'sell.html']);
+    return '<div class="panel" style="padding:8px">' + mine.map(function (it) {
+      var t = BYS.left(it.endsAt - Date.now());
+      var f = BYS.fee(it.cur);
+      return '<a class="hist-i" href="auction.html?id=' + it.id + '" style="padding:14px">' +
+        '<div class="av" style="width:44px;height:44px;border-radius:11px;' + BYS.art(it.hue) + '">' + BYS.esc(BYS.initials(it.domain)) + '</div>' +
+        '<div class="hist-m"><div class="hist-n">' + BYS.esc(it.title) + '</div>' +
+        '<div class="hist-t">' + it.bids + ' bids · ' + it.views + ' views · ' + it.watchers + ' watching</div></div>' +
+        '<div style="text-align:right"><div class="hist-v">' + BYS.money(it.cur) + '</div>' +
+        '<div class="hist-t">' + (t.done ? 'closed' : t.txt) + ' · net ' + BYS.money(it.cur - f) + '</div></div></a>';
+    }).join('') + '</div>';
+  }
+
+  function won() {
+    var done = BYS.myBids().filter(function (i) { return !BYS.live(i); });
+    if (!done.length) return empty('&#127942;', 'Nothing settled yet', 'Auctions you bid on will land here once the clock runs out.');
+    return '<div class="panel" style="padding:8px">' + done.map(function (it) {
+      var w = BYS.leading(it);
+      return '<a class="hist-i" href="auction.html?id=' + it.id + '" style="padding:14px">' +
+        '<div class="av" style="width:44px;height:44px;border-radius:11px;' + BYS.art(it.hue) + '">' + BYS.esc(BYS.initials(it.domain)) + '</div>' +
+        '<div class="hist-m"><div class="hist-n">' + BYS.esc(it.title) + '</div>' +
+        '<div class="hist-t">' + (w ? 'You won · fee ' + BYS.money(BYS.fee(it.cur)) + ' · escrow open' : 'Sold to ' + BYS.esc(it.history[0].by)) + '</div></div>' +
+        '<div style="text-align:right"><div class="hist-v">' + BYS.money(it.cur) + '</div>' +
+        '<div class="hist-t" style="color:' + (w ? 'var(--accent)' : 'var(--ink-3)') + '">' + (w ? 'WON' : 'lost') + '</div></div></a>';
+    }).join('') + '</div>';
+  }
+
+  function activity() {
+    var n = BYS.state.notes;
+    if (!n.length) return empty('&#128276;', 'No activity yet', 'Bids, outbids and closings show up here.');
+    var ICON = { bid: '&#128176;', out: '&#9888;', won: '&#127942;', time: '&#9201;', list: '&#128228;' };
+    return '<div class="panel" style="padding:8px">' + n.map(function (x) {
+      return '<a class="hist-i" href="' + (x.link || '#') + '" style="padding:14px">' +
+        '<div class="av" style="background:hsl(' + BYS.avHue(x.kind) + ' 62% 52%)">' + (ICON[x.kind] || '&#8226;') + '</div>' +
+        '<div class="hist-m"><div class="hist-n">' + BYS.esc(x.title) + '</div>' +
+        '<div class="hist-t">' + BYS.esc(x.body) + '</div></div>' +
+        '<div class="hist-t">' + BYS.ago(x.at) + '</div></a>';
+    }).join('') + '</div>';
+  }
+
+  function render() {
+    myStats();
+    var html;
+    if (tab === 'bids') html = bidsTable();
+    else if (tab === 'watch') html = grid(BYS.state.watch.map(BYS.get).filter(Boolean), '&#9733;', 'Watchlist is empty',
+      'Star any lot to keep an eye on it.', ['Browse auctions', 'auctions.html']);
+    else if (tab === 'listings') html = listings();
+    else if (tab === 'won') html = won();
+    else html = activity();
+    $('#body').innerHTML = html;
+    BYS.bindWatch($('#body'));
+    BYS.timers();
+  }
+
+  document.querySelectorAll('.tab').forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on'); tab = b.dataset.tab; render();
+    };
+  });
+
+  document.addEventListener('bys:update', render);
+  document.addEventListener('bys:watch', render);
+  render();
+});
+</script>
+
+<!-- Vercel Web Analytics -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

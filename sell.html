@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>List your site for $1 — BidYourSite</title>
+<meta name="description" content="Put your website, domain, newsletter or app on the block for $1. Flat 5% success fee capped at $500, nothing if it does not sell.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234f39f6'/><text x='50' y='72' font-size='64' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>B</text></svg>">
+<script src="assets/js/app.js"></script>
+</head>
+<body>
+<header data-chrome="header"></header>
+
+<div class="wrap pg-head">
+  <h1>List it for a dollar</h1>
+  <p>Three steps, about three minutes. The opening price is always $1 — that is the point. You pay 5% of the final price, capped at $500, and nothing at all if it does not sell.</p>
+</div>
+
+<div class="wrap detail" style="grid-template-columns:1.35fr 1fr;padding-top:28px">
+  <div>
+    <div class="panel">
+      <div class="stepper">
+        <div class="st on" data-st="1">1 · The asset</div>
+        <div class="st" data-st="2">2 · The numbers</div>
+        <div class="st" data-st="3">3 · Terms</div>
+      </div>
+
+      <form id="form" novalidate>
+        <!-- ---------- step 1 ---------- -->
+        <div class="pane on" data-pane="1">
+          <div class="form-grid">
+            <div>
+              <label class="lb" for="title">Listing title <small>· what a buyer sees first</small></label>
+              <input class="fld" id="title" required maxlength="70" placeholder="e.g. Cron Cabin — Scheduled Jobs API">
+              <div class="hint"><span id="titleN">0</span>/70 characters</div>
+            </div>
+            <div class="f2">
+              <div>
+                <label class="lb" for="domain">Domain</label>
+                <input class="fld" id="domain" required placeholder="croncabin.io">
+              </div>
+              <div>
+                <label class="lb" for="cat">Category</label>
+                <select class="fld" id="cat"></select>
+              </div>
+            </div>
+            <div>
+              <label class="lb" for="tagline">One-line pitch <small>· shown on the card</small></label>
+              <input class="fld" id="tagline" required maxlength="110" placeholder="Developer cron-as-a-service, 38 paying accounts.">
+            </div>
+            <div>
+              <label class="lb" for="about">Full description</label>
+              <textarea class="fld" id="about" placeholder="What it does, who uses it, how much work it takes to run, what exactly transfers on sale."></textarea>
+              <div class="hint">Listings that state the weekly workload honestly close roughly 40% higher. Buyers price uncertainty in.</div>
+            </div>
+            <div>
+              <label class="lb" for="tech">Stack <small>· comma separated</small></label>
+              <input class="fld" id="tech" placeholder="Rust, Postgres, Hetzner">
+            </div>
+          </div>
+        </div>
+
+        <!-- ---------- step 2 ---------- -->
+        <div class="pane" data-pane="2">
+          <div class="form-grid">
+            <div class="f2">
+              <div>
+                <label class="lb" for="mrr">Monthly revenue <small>· USD</small></label>
+                <input class="fld" id="mrr" type="number" min="0" placeholder="456">
+              </div>
+              <div>
+                <label class="lb" for="profit">Monthly profit <small>· after costs</small></label>
+                <input class="fld" id="profit" type="number" min="0" placeholder="420">
+              </div>
+            </div>
+            <div class="f2">
+              <div>
+                <label class="lb" for="traffic">Monthly visitors</label>
+                <input class="fld" id="traffic" type="number" min="0" placeholder="4200">
+              </div>
+              <div>
+                <label class="lb" for="age">Age of the asset</label>
+                <input class="fld" id="age" placeholder="1 yr 3 mo">
+              </div>
+            </div>
+            <div class="note">
+              <b>Valuation guide.</b> Internet businesses on this marketplace close between
+              <b id="guideLo">—</b> and <b id="guideHi">—</b> based on the profit you entered
+              (24× to 40× monthly profit). Domains and pre-revenue projects price on demand alone.
+            </div>
+            <div>
+              <label class="lb">Revenue verification</label>
+              <div class="chips" id="verify">
+                <button type="button" class="chip on" data-v="stripe">Connect Stripe</button>
+                <button type="button" class="chip" data-v="analytics">Connect analytics</button>
+                <button type="button" class="chip" data-v="screenshare">Screen-share on request</button>
+                <button type="button" class="chip" data-v="none">Self-reported only</button>
+              </div>
+              <div class="hint">Verified lots carry a badge and historically close 2.4× higher than self-reported ones.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---------- step 3 ---------- -->
+        <div class="pane" data-pane="3">
+          <div class="form-grid">
+            <div class="f2">
+              <div>
+                <label class="lb" for="days">Auction length</label>
+                <select class="fld" id="days">
+                  <option value="1">1 day — fast flip</option>
+                  <option value="3">3 days</option>
+                  <option value="7" selected>7 days — recommended</option>
+                  <option value="14">14 days — maximum reach</option>
+                </select>
+              </div>
+              <div>
+                <label class="lb" for="buyNow">Instant-buy price <small>· optional</small></label>
+                <input class="fld" id="buyNow" type="number" min="0" placeholder="3600">
+              </div>
+            </div>
+            <div>
+              <label class="lb">Included in the handover</label>
+              <div class="chips" id="incl">
+                <button type="button" class="chip on" data-i="domain">Domain</button>
+                <button type="button" class="chip on" data-i="code">Source code</button>
+                <button type="button" class="chip on" data-i="list">Email list</button>
+                <button type="button" class="chip" data-i="socials">Social accounts</button>
+                <button type="button" class="chip" data-i="support">30-day support</button>
+                <button type="button" class="chip" data-i="stock">Inventory</button>
+              </div>
+            </div>
+            <div class="note" id="feeNote"></div>
+            <label style="display:flex;gap:10px;align-items:flex-start;font-size:.9rem;color:var(--ink-2)">
+              <input type="checkbox" id="agree" style="margin-top:4px">
+              <span>I own this asset outright, the figures above are accurate, and I understand that
+              <strong>bids are binding</strong> and the lot cannot be withdrawn once a bid is placed.
+              I have read the <a href="rules.html" style="color:var(--brand)">auction rules</a>.</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:26px">
+          <button type="button" class="btn btn-g" id="back" style="display:none">Back</button>
+          <button type="button" class="btn btn-p" id="next" style="margin-left:auto">Continue</button>
+          <button type="submit" class="btn btn-p" id="submit" style="margin-left:auto;display:none">Publish for $1</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ---------- live preview ---------- -->
+  <aside class="sticky">
+    <div class="panel">
+      <h3>Live preview</h3>
+      <div id="preview"></div>
+      <div class="hint" style="margin-top:12px">This is exactly how your lot appears in Browse.</div>
+    </div>
+    <div class="panel">
+      <h3>What you will pay</h3>
+      <div class="rows" id="costs"></div>
+    </div>
+    <div class="panel">
+      <h3>Seller tips</h3>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:11px;font-size:.89rem;color:var(--ink-2)">
+        <li><strong>Post the ugly numbers.</strong> Churn, refunds, the month revenue dipped. Buyers discount what they cannot see.</li>
+        <li><strong>7 days beats 1 day</strong> for anything over $1,000 — it takes a weekend for serious buyers to surface.</li>
+        <li><strong>Skip the instant-buy price</strong> unless you genuinely want out fast; it caps your upside.</li>
+        <li><strong>Answer questions within a day.</strong> Lots with an active seller thread take 3× more bids.</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<footer data-chrome="footer"></footer>
+
+<script>
+document.addEventListener('bys:ready', function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var step = 1, verify = 'stripe';
+  var hue = Math.floor(Math.random() * 360);
+
+  $('#cat').innerHTML = BYS.CATS.map(function (c) { return '<option>' + c + '</option>'; }).join('');
+
+  function data() {
+    return {
+      title: $('#title').value.trim() || 'Untitled lot',
+      domain: $('#domain').value.trim() || 'yourdomain.com',
+      cat: $('#cat').value,
+      tagline: $('#tagline').value.trim() || 'Add a one-line pitch so buyers know what this is.',
+      about: $('#about').value.trim(),
+      tech: $('#tech').value,
+      mrr: Number($('#mrr').value) || 0,
+      profit: Number($('#profit').value) || 0,
+      traffic: Number($('#traffic').value) || 0,
+      age: $('#age').value.trim() || 'new',
+      days: Number($('#days').value),
+      buyNow: Number($('#buyNow').value) || 0
+    };
+  }
+
+  function preview() {
+    var d = data();
+    var fake = Object.assign({}, d, {
+      id: 'preview', cur: 1, bids: 0, hue: hue, verified: verify !== 'none',
+      seller: BYS.state.user.name, createdAt: Date.now(),
+      endsAt: Date.now() + d.days * 86400000
+    });
+    var html = BYS.cardHTML(fake).replace(/href="auction\.html\?id=preview"/g, 'href="#"');
+    $('#preview').innerHTML = html;
+    $('#preview').querySelectorAll('[data-watch]').forEach(function (b) { b.onclick = function (e) { e.preventDefault(); }; });
+
+    var est = d.buyNow || (d.profit ? d.profit * 30 : 800);
+    var f = BYS.fee(est);
+    $('#costs').innerHTML =
+      '<div class="row"><span>Listing fee today</span><span>$1</span></div>' +
+      '<div class="row"><span>Credited back on sale</span><span style="color:var(--accent)">−$1</span></div>' +
+      '<div class="row"><span>Success fee (5%, max $500)</span><span>' + BYS.money(f) + '</span></div>' +
+      '<div class="row"><span>Escrow &amp; transfer</span><span>$0</span></div>' +
+      '<div class="row"><span><strong>If it closes near ' + BYS.money(est) + '</strong></span>' +
+      '<span style="color:var(--accent)">You keep ' + BYS.money(est - f) + '</span></div>';
+
+    $('#feeNote').innerHTML = '<b>No sale, no fee.</b> If your lot ends without a bid above $1 you owe nothing ' +
+      'and can relist once for free. On a sale we take 5% capped at $500 — a ' + BYS.money(est) +
+      ' close costs you ' + BYS.money(f) + '.';
+
+    if (d.profit) {
+      $('#guideLo').textContent = BYS.money(d.profit * 24);
+      $('#guideHi').textContent = BYS.money(d.profit * 40);
+    } else {
+      $('#guideLo').textContent = '—'; $('#guideHi').textContent = '—';
+    }
+    $('#titleN').textContent = $('#title').value.length;
+  }
+
+  function paintStep() {
+    document.querySelectorAll('.pane').forEach(function (p) { p.classList.toggle('on', p.dataset.pane === String(step)); });
+    document.querySelectorAll('.st').forEach(function (s) {
+      var n = Number(s.dataset.st);
+      s.classList.toggle('on', n === step);
+      s.classList.toggle('ok', n < step);
+    });
+    $('#back').style.display = step > 1 ? '' : 'none';
+    $('#next').style.display = step < 3 ? '' : 'none';
+    $('#submit').style.display = step === 3 ? '' : 'none';
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+  }
+
+  function valid(n) {
+    if (n === 1) {
+      var miss = ['title', 'domain', 'tagline'].filter(function (id) { return !$('#' + id).value.trim(); });
+      if (miss.length) { BYS.toast('err', 'Missing details', 'Fill in the title, domain and one-line pitch.'); return false; }
+      if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test($('#domain').value.trim())) {
+        BYS.toast('err', 'Check the domain', 'Enter it as a bare domain, e.g. croncabin.io'); return false;
+      }
+    }
+    return true;
+  }
+
+  $('#next').onclick = function () { if (valid(step)) { step++; paintStep(); } };
+  $('#back').onclick = function () { step--; paintStep(); };
+
+  document.querySelectorAll('#verify .chip').forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll('#verify .chip').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on'); verify = b.dataset.v; preview();
+    };
+  });
+  document.querySelectorAll('#incl .chip').forEach(function (b) {
+    b.onclick = function () { b.classList.toggle('on'); };
+  });
+
+  $('#form').addEventListener('input', preview);
+  $('#form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!valid(1)) { step = 1; paintStep(); return; }
+    if (!$('#agree').checked) { BYS.toast('err', 'One more thing', 'Tick the box to confirm ownership and binding bids.'); return; }
+    var it = BYS.createListing(data());
+    BYS.toast('ok', 'Your lot is live', it.title + ' is open at $1.');
+    setTimeout(function () { location.href = 'auction.html?id=' + it.id; }, 900);
+  });
+
+  paintStep(); preview();
+});
+</script>
+
+<!-- Vercel Web Analytics -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

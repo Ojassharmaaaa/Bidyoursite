@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Auction — BidYourSite</title>
+<meta name="description" content="Live auction detail: bid history, revenue and traffic figures, seller record and escrow terms.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234f39f6'/><text x='50' y='72' font-size='64' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>B</text></svg>">
+<script src="assets/js/app.js"></script>
+</head>
+<body>
+<header data-chrome="header"></header>
+
+<div class="wrap crumb"><a href="index.html">Home</a> / <a href="auctions.html">Auctions</a> / <span id="crumbT">Lot</span></div>
+
+<main class="wrap detail" id="main"></main>
+
+<div class="wrap" style="padding-bottom:70px">
+  <div class="sec-head"><div><div class="kicker">Similar lots</div><h2 style="font-size:1.5rem">You might also want</h2></div></div>
+  <div class="grid" id="similar"></div>
+</div>
+
+<footer data-chrome="footer"></footer>
+
+<script>
+document.addEventListener('bys:ready', function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var id = new URLSearchParams(location.search).get('id');
+  var it = BYS.get(id) || BYS.liveItems()[0];
+
+  if (!it) {
+    $('#main').innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="ic">&#128533;</div>' +
+      '<h4>Lot not found</h4><p>It may have been removed.</p>' +
+      '<a class="btn btn-p" style="margin-top:16px" href="auctions.html">Back to auctions</a></div>';
+    return;
+  }
+  document.title = it.title + ' — BidYourSite';
+  $('#crumbT').textContent = it.title;
+  it.views++;
+
+  function metricRows() {
+    var r = [
+      ['Domain', it.domain],
+      ['Category', it.cat],
+      ['Age', it.age],
+      ['Monthly revenue', it.mrr ? BYS.money(it.mrr) : 'Pre-revenue'],
+      ['Monthly profit', it.profit ? BYS.money(it.profit) : '—'],
+      ['Monthly visitors', BYS.compact(it.traffic)],
+      ['Profit multiple at current bid', it.profit ? (it.cur / it.profit).toFixed(1) + '× monthly' : '—'],
+      ['Annualised profit', it.profit ? BYS.money(it.profit * 12) : '—'],
+      ['Views on this lot', it.views.toLocaleString()],
+      ['Watching', it.watchers + ' bidders']
+    ];
+    return r.map(function (x) {
+      return '<div class="row"><span>' + x[0] + '</span><span>' + BYS.esc(String(x[1])) + '</span></div>';
+    }).join('');
+  }
+
+  function history() {
+    if (!it.history.length) return '<div class="empty" style="padding:34px"><div class="ic">&#128064;</div>' +
+      '<h4>No bids yet</h4><p>Open at ' + BYS.money(BYS.minBid(it)) + ' and set the pace.</p></div>';
+    return it.history.map(function (h, i) {
+      var me = h.by === 'you';
+      return '<div class="hist-i' + (i === 0 ? ' top' : '') + '">' +
+        '<div class="av" style="background:hsl(' + BYS.avHue(h.by) + ' 62% 52%)">' + BYS.esc(BYS.initials(h.by)) + '</div>' +
+        '<div class="hist-m"><div class="hist-n">' + (me ? 'You' : BYS.esc(h.by)) +
+          (i === 0 ? ' <span style="color:var(--accent);font-size:.78rem">· highest</span>' : '') + '</div>' +
+        '<div class="hist-t">' + BYS.ago(h.at) + '</div></div>' +
+        '<div class="hist-v">' + BYS.money(h.amt) + '</div></div>';
+    }).join('');
+  }
+
+  function render() {
+    it = BYS.get(it.id) || it;
+    var t = BYS.left(it.endsAt - Date.now());
+    var mine = it.seller === BYS.state.user.name;
+    var lead = BYS.leading(it);
+    var cap = BYS.state.autobids[it.id];
+    var need = BYS.minBid(it);
+
+    $('#main').innerHTML =
+      /* ---- left column ---- */
+      '<div>' +
+        '<div class="hero-img" style="' + BYS.art(it.hue) + '">' +
+          '<span class="badge">' + BYS.esc(it.cat) + '</span>' +
+          '<button class="fav' + (BYS.isWatched(it.id) ? ' on' : '') + '" data-watch="' + it.id + '" title="Watch">&#9733;</button>' +
+          '<span>' + BYS.esc(it.domain) + '</span>' +
+        '</div>' +
+        '<div class="panel">' +
+          '<h1 style="font-size:1.7rem;letter-spacing:-.03em;line-height:1.2;margin-bottom:8px">' + BYS.esc(it.title) + '</h1>' +
+          '<p style="color:var(--ink-2);margin-bottom:16px">' + BYS.esc(it.tagline) + '</p>' +
+          '<div class="tags">' + (it.tech || []).map(function (x) { return '<span class="tag">' + BYS.esc(x) + '</span>'; }).join('') + '</div>' +
+          '<p style="margin-top:18px;color:var(--ink-2)">' + BYS.esc(it.about) + '</p>' +
+        '</div>' +
+        '<div class="panel"><h3>Numbers</h3><div class="rows">' + metricRows() + '</div></div>' +
+        '<div class="panel"><h3>Bid history <span style="color:var(--ink-3);font-weight:500">(' +
+          (it.bids > it.history.length ? 'last ' + it.history.length + ' of ' + it.bids : it.bids) + ')</span></h3>' +
+          '<div class="hist">' + history() + '</div></div>' +
+        '<div class="panel"><h3>What transfers</h3><div class="rows">' +
+          '<div class="row"><span>Domain &amp; DNS</span><span>Included</span></div>' +
+          '<div class="row"><span>Source code / repo</span><span>Included</span></div>' +
+          '<div class="row"><span>Customer &amp; email list</span><span>' + (it.mrr ? 'Included' : 'n/a') + '</span></div>' +
+          '<div class="row"><span>Analytics history</span><span>Included</span></div>' +
+          '<div class="row"><span>Seller support after sale</span><span>14 days</span></div>' +
+          '<div class="row"><span>Escrow</span><span>Required on both sides</span></div>' +
+        '</div></div>' +
+      '</div>' +
+
+      /* ---- right column ---- */
+      '<aside class="sticky">' +
+        '<div class="panel">' +
+          '<div class="bid-box">' +
+            '<div class="bid-l">' + (t.done ? 'Sold for' : 'Current bid') + '</div>' +
+            '<div class="big">' + BYS.money(it.cur) + '</div>' +
+            '<div style="font-size:.85rem;color:var(--ink-3);margin-top:4px">' + it.bids + ' bids · opened at $1</div>' +
+            (lead ? '<div style="margin-top:10px;color:var(--accent);font-weight:700;font-size:.9rem">&#10003; You are the highest bidder</div>' : '') +
+          '</div>' +
+
+          (t.done
+            ? '<div class="note" style="text-align:center">This auction has closed.' +
+              (lead ? ' <b>You won it.</b> Escrow instructions were emailed.' : '') + '</div>'
+            : '<div class="cdwn" data-cd="' + it.endsAt + '">' +
+                '<div class="cd-u"><div class="cd-n" data-u="d">00</div><div class="cd-l">days</div></div>' +
+                '<div class="cd-u"><div class="cd-n" data-u="h">00</div><div class="cd-l">hrs</div></div>' +
+                '<div class="cd-u"><div class="cd-n" data-u="m">00</div><div class="cd-l">min</div></div>' +
+                '<div class="cd-u"><div class="cd-n" data-u="s">00</div><div class="cd-l">sec</div></div>' +
+              '</div>' +
+              (mine
+                ? '<div class="note">This is your listing — you cannot bid on it. Share the link to draw bidders.</div>'
+                : '<div class="quick">' +
+                    '<button class="btn btn-g btn-sm" data-q="' + need + '">' + BYS.money(need) + '</button>' +
+                    '<button class="btn btn-g btn-sm" data-q="' + (need + BYS.increment(it.cur) * 2) + '">' + BYS.money(need + BYS.increment(it.cur) * 2) + '</button>' +
+                    '<button class="btn btn-g btn-sm" data-q="' + (need + BYS.increment(it.cur) * 5) + '">' + BYS.money(need + BYS.increment(it.cur) * 5) + '</button>' +
+                  '</div>' +
+                  '<label class="lb">Your bid <small>· minimum ' + BYS.money(need) + '</small></label>' +
+                  '<input class="fld" id="amt" type="number" min="' + need + '" step="1" value="' + need + '">' +
+                  '<button class="btn btn-p btn-block" id="place" style="margin-top:12px">Place bid</button>' +
+                  (it.buyNow && it.cur < it.buyNow
+                    ? '<button class="btn btn-g btn-block" id="bin" style="margin-top:8px">Buy now for ' + BYS.money(it.buyNow) + '</button>' : '') +
+                  '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">' +
+                    '<label class="lb">Auto-bid ceiling <small>· we bid for you</small></label>' +
+                    '<div style="display:flex;gap:8px">' +
+                      '<input class="fld" id="maxAmt" type="number" min="' + need + '" step="1" placeholder="e.g. ' + (need * 3) + '" value="' + (cap || '') + '">' +
+                      '<button class="btn btn-g" id="setAuto">' + (cap ? 'Update' : 'Arm') + '</button>' +
+                    '</div>' +
+                    (cap ? '<div class="hint">Armed up to <strong>' + BYS.money(cap) + '</strong>. ' +
+                      '<a href="#" id="killAuto" style="color:var(--danger)">Cancel</a></div>'
+                      : '<div class="hint">We match rivals in the smallest legal increment, never above your ceiling.</div>') +
+                  '</div>')) +
+
+          '<div class="hint" style="margin-top:14px;text-align:center">Bidding limit ' + BYS.money(BYS.state.user.balance) +
+            ' · fee if you win: ' + BYS.money(BYS.fee(it.cur)) + '</div>' +
+        '</div>' +
+
+        '<div class="panel"><h3>Seller</h3>' +
+          '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">' +
+            '<div class="av" style="width:46px;height:46px;font-size:1rem;background:hsl(' + BYS.avHue(it.seller) + ' 62% 52%)">' +
+              BYS.esc(BYS.initials(it.seller)) + '</div>' +
+            '<div><div style="font-weight:700">' + BYS.esc(it.seller) +
+              (it.verified ? ' <span style="color:var(--accent)" title="Identity and revenue verified">&#10003;</span>' : '') + '</div>' +
+              '<div style="font-size:.83rem;color:var(--ink-3)">' + (it.rating ? it.rating + '★ · ' + it.sales + ' completed sales' : 'First listing') + '</div>' +
+            '</div></div>' +
+          '<div class="rows">' +
+            '<div class="row"><span>Revenue proof</span><span>' + (it.verified ? 'Stripe verified' : 'Self-reported') + '</span></div>' +
+            '<div class="row"><span>Response time</span><span>Under 4 hours</span></div>' +
+            '<div class="row"><span>Payout method</span><span>Escrow release</span></div>' +
+          '</div>' +
+          '<button class="btn btn-g btn-block" style="margin-top:14px" id="ask">Ask the seller a question</button>' +
+        '</div>' +
+
+        '<div class="panel"><h3>Buyer protection</h3>' +
+          '<ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:.89rem;color:var(--ink-2)">' +
+            '<li>&#128274; Funds held in escrow until you confirm handover.</li>' +
+            '<li>&#9201; Any bid in the final 2 minutes extends the clock by 2 minutes.</li>' +
+            '<li>&#128203; 7-day inspection window on revenue claims.</li>' +
+            '<li>&#8634; Full refund if the seller fails to transfer.</li>' +
+          '</ul>' +
+          '<a class="btn btn-g btn-block" style="margin-top:14px" href="rules.html#escrow">Read the escrow terms</a>' +
+        '</div>' +
+      '</aside>';
+
+    BYS.bindWatch($('#main'));
+    BYS.timers();
+    wire();
+    similar();
+  }
+
+  function wire() {
+    document.querySelectorAll('[data-q]').forEach(function (b) {
+      b.onclick = function () { $('#amt').value = b.dataset.q; };
+    });
+    var place = $('#place');
+    if (place) place.onclick = function () {
+      var r = BYS.bid(it.id, $('#amt').value, 'you');
+      BYS.toast(r.ok ? 'ok' : 'err', r.ok ? 'Bid accepted' : 'Bid rejected', r.msg);
+      if (r.ok) render();
+    };
+    var bin = $('#bin');
+    if (bin) bin.onclick = function () {
+      var r = BYS.buyNow(it.id);
+      BYS.toast(r.ok ? 'ok' : 'err', r.ok ? 'Purchased' : 'Cannot buy now', r.msg);
+      if (r.ok) render();
+    };
+    var sa = $('#setAuto');
+    if (sa) sa.onclick = function () {
+      var r = BYS.setAutoBid(it.id, $('#maxAmt').value);
+      BYS.toast(r.ok ? 'ok' : 'err', r.ok ? 'Auto-bid armed' : 'Could not arm auto-bid', r.msg);
+      if (r.ok) render();
+    };
+    var ka = $('#killAuto');
+    if (ka) ka.onclick = function (e) {
+      e.preventDefault(); BYS.clearAutoBid(it.id);
+      BYS.toast('warn', 'Auto-bid cancelled', 'You keep any bid already placed.'); render();
+    };
+    var ask = $('#ask');
+    if (ask) ask.onclick = function () {
+      BYS.toast('', 'Message sent', 'The seller typically replies within 4 hours.');
+    };
+  }
+
+  function similar() {
+    var rows = BYS.liveItems().filter(function (x) {
+      return x.id !== it.id && (x.cat === it.cat || Math.abs(x.cur - it.cur) < it.cur * 0.6);
+    }).slice(0, 3);
+    document.querySelector('#similar').innerHTML = rows.map(BYS.cardHTML).join('');
+    BYS.bindWatch(document.querySelector('#similar'));
+  }
+
+  // Only repaint when this lot actually moved, and keep whatever the user was typing.
+  var snap = '';
+  function maybeRender() {
+    var cur = BYS.get(it.id);
+    if (!cur) return;
+    var sig = cur.cur + '|' + cur.endsAt + '|' + cur.history.length;
+    if (sig === snap) return;
+    snap = sig;
+    var keep = { max: (($('#maxAmt') || {}).value), focus: document.activeElement && document.activeElement.id };
+    render();
+    if (keep.max && $('#maxAmt')) $('#maxAmt').value = keep.max;
+    if (keep.focus && $('#' + keep.focus)) $('#' + keep.focus).focus();
+  }
+  document.addEventListener('bys:update', maybeRender);
+  render();
+  snap = it.cur + '|' + it.endsAt + '|' + it.history.length;
+});
+</script>
+
+<!-- Vercel Web Analytics -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

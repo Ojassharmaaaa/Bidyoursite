@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Auction rules — BidYourSite</title>
+<meta name="description" content="How bidding, increments, anti-snipe extensions, escrow, fees and disputes work on BidYourSite.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234f39f6'/><text x='50' y='72' font-size='64' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>B</text></svg>">
+<script src="assets/js/app.js"></script>
+</head>
+<body>
+<header data-chrome="header"></header>
+
+<div class="wrap pg-head">
+  <h1>The rules</h1>
+  <p>Short version: bids are binding, everything opens at $1, money moves through escrow, and we take 5% capped at $500 only when a lot actually sells.</p>
+</div>
+
+<div class="wrap detail" style="grid-template-columns:1.5fr 1fr;padding-top:26px">
+  <div>
+    <div class="panel">
+      <h3>1 · Bidding</h3>
+      <div class="rows">
+        <div class="row"><span>Opening price</span><span>$1 on every lot, no reserves</span></div>
+        <div class="row"><span>Bid increments</span><span id="incTable"></span></div>
+        <div class="row"><span>Are bids binding?</span><span>Yes — a winning bid is a contract</span></div>
+        <div class="row"><span>Retracting a bid</span><span>Only for a typo, within 60 seconds</span></div>
+        <div class="row"><span>Bidding on your own lot</span><span>Blocked, and grounds for a ban</span></div>
+        <div class="row"><span>Proxy / auto-bidding</span><span>Set a ceiling; we bid the minimum needed</span></div>
+      </div>
+      <p style="margin-top:16px;color:var(--ink-2);font-size:.92rem">
+        Auto-bidding works the way a live auction house does. You name the highest number you would
+        pay; the system only ever bids one increment above the current price, and it stops the moment
+        someone goes past your ceiling. Nobody sees your maximum — not the seller, not other bidders.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3>2 · The anti-snipe clock</h3>
+      <p style="color:var(--ink-2)">Any bid placed in the <strong>final two minutes</strong> pushes the closing time
+      out by two minutes. That repeats for as long as people keep bidding. Sniping a lot in the last second
+      wins you nothing here — the price ends where demand actually is, not where reflexes are fastest.</p>
+      <div class="note" style="margin-top:14px">A lot can extend indefinitely. The longest auction on record here ran
+      41 minutes past its scheduled close and finished 3.2× above the price at the original deadline.</div>
+    </div>
+
+    <div class="panel" id="escrow">
+      <h3>3 · Escrow and handover</h3>
+      <div class="rows">
+        <div class="row"><span>Winner pays</span><span>Within 48 hours of close</span></div>
+        <div class="row"><span>Funds held by</span><span>Licensed third-party escrow</span></div>
+        <div class="row"><span>Seller transfers</span><span>Within 5 business days</span></div>
+        <div class="row"><span>Buyer inspection window</span><span>7 days on verified revenue claims</span></div>
+        <div class="row"><span>Funds released</span><span>On buyer sign-off, or automatically after 7 days</span></div>
+        <div class="row"><span>Seller payout lands</span><span>Within 48 hours of release</span></div>
+      </div>
+      <p style="margin-top:16px;color:var(--ink-2);font-size:.92rem">
+        Nobody transfers a domain on a promise. The buyer's money sits with the escrow agent while the
+        domain, repository, hosting, analytics, payment processor and mailing list move across. If the
+        seller cannot deliver what the listing claimed, the buyer gets a full refund and the seller
+        covers the escrow fee.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3>4 · Fees</h3>
+      <div class="rows">
+        <div class="row"><span>Listing fee</span><span>$1, credited back if the lot sells</span></div>
+        <div class="row"><span>Success fee</span><span>5% of the hammer price, capped at $500</span></div>
+        <div class="row"><span>Buyer's premium</span><span>None</span></div>
+        <div class="row"><span>Escrow handling</span><span>Covered by us on sales above $500</span></div>
+        <div class="row"><span>If it does not sell</span><span>No fee, and one free relist</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>5 · What may not be listed</h3>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;color:var(--ink-2);font-size:.92rem">
+        <li>&#10007; Assets you do not own outright, or that carry an active lien or partnership claim.</li>
+        <li>&#10007; Traffic or revenue generated by bots, click farms or paid-to-click schemes.</li>
+        <li>&#10007; Sites built on scraped personal data, or mailing lists collected without consent.</li>
+        <li>&#10007; Trademark-infringing domains and typosquats.</li>
+        <li>&#10007; Anything whose revenue depends on malware, phishing or deceptive billing.</li>
+        <li>&#10007; Adult, gambling and pharmaceutical assets — payment partners will not process them.</li>
+      </ul>
+      <div class="note" style="margin-top:14px"><b>Misstated numbers void the sale.</b> If a buyer proves within the
+      inspection window that revenue or traffic was materially misrepresented, the escrow refunds in full and
+      the seller is removed from the marketplace.</div>
+    </div>
+
+    <div class="panel" id="faq">
+      <h3>Frequently asked</h3>
+      <div id="faqs"></div>
+    </div>
+  </div>
+
+  <aside class="sticky">
+    <div class="panel">
+      <h3>On this page</h3>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:.9rem">
+        <li><a href="#" style="color:var(--brand)">1 · Bidding</a></li>
+        <li><a href="#" style="color:var(--brand)">2 · Anti-snipe clock</a></li>
+        <li><a href="#escrow" style="color:var(--brand)">3 · Escrow and handover</a></li>
+        <li><a href="#" style="color:var(--brand)">4 · Fees</a></li>
+        <li><a href="#" style="color:var(--brand)">5 · Prohibited listings</a></li>
+        <li><a href="#faq" style="color:var(--brand)">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Fee calculator</h3>
+      <label class="lb">Hammer price</label>
+      <input class="fld" type="number" id="hp" value="4200" min="1">
+      <div class="rows" style="margin-top:14px">
+        <div class="row"><span>Our fee</span><span id="rf">—</span></div>
+        <div class="row"><span>You keep</span><span id="rn" style="color:var(--accent)">—</span></div>
+        <div class="row"><span>Effective rate</span><span id="rr">—</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Still unsure?</h3>
+      <p style="color:var(--ink-2);font-size:.9rem;margin-bottom:14px">Ask before you list. We would rather answer a
+      question than unwind a sale.</p>
+      <a class="btn btn-p btn-block" href="mailto:hello@bidyoursite.com">Email us</a>
+    </div>
+  </aside>
+</div>
+
+<footer data-chrome="footer"></footer>
+
+<script>
+document.addEventListener('bys:ready', function () {
+  var $ = function (s) { return document.querySelector(s); };
+
+  $('#incTable').innerHTML = 'under $100 → $5 · $100–500 → $10 · $500–2k → $25 · $2k–10k → $50 · $10k+ → $100';
+
+  var FAQ = [
+    ['Why does everything start at $1?',
+     'Reserves kill auctions. A lot opening at $1 gets bids in the first hour, and early bids attract more bidders — the price finds its level far faster than a listing sitting at an optimistic asking price for three months.'],
+    ['What stops someone bidding $50,000 and vanishing?',
+     'Bidders are verified before their first bid and carry a bidding limit tied to that verification. A winner who does not pay within 48 hours forfeits their deposit, loses the lot to the underbidder and is removed from the marketplace.'],
+    ['Can I set a minimum I would accept?',
+     'Not a hidden reserve, no. You can set an instant-buy price to cap the auction, or pick a shorter run time. If you need a floor, this is probably the wrong marketplace for that asset.'],
+    ['How do you verify revenue?',
+     'Read-only Stripe or Paddle connection for revenue, read-only analytics for traffic, and a live screen-share for anything that will not connect. Verified lots carry a check mark and close substantially higher.'],
+    ['What if the buyer wrecks the site after transfer?',
+     'Once escrow releases, the asset is theirs to run — or ruin. Sellers sometimes negotiate a short consulting period; that is between the two of you and is not enforced by us.'],
+    ['Do you handle the legal transfer paperwork?',
+     'We provide a standard asset purchase agreement that both sides sign inside escrow. For sales above $25,000 we recommend your own counsel review it.'],
+    ['Can I list the same asset twice?',
+     'One live listing per asset. If it closes without a bid you get a free relist, and we will suggest changes to the description that usually help.']
+  ];
+  $('#faqs').innerHTML = FAQ.map(function (f) {
+    return '<div class="acc"><div class="acc-h">' + f[0] + '<i>+</i></div><div class="acc-b">' + f[1] + '</div></div>';
+  }).join('');
+  document.querySelectorAll('.acc-h').forEach(function (h) {
+    h.onclick = function () { h.parentNode.classList.toggle('open'); };
+  });
+
+  function calc() {
+    var v = Math.max(1, Number($('#hp').value) || 0), f = BYS.fee(v);
+    $('#rf').textContent = BYS.money(f);
+    $('#rn').textContent = BYS.money(v - f);
+    $('#rr').textContent = (f / v * 100).toFixed(2) + '%';
+  }
+  $('#hp').addEventListener('input', calc);
+  calc();
+});
+</script>
+
+<!-- Vercel Web Analytics -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

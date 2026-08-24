@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live auctions — BidYourSite</title>
+<meta name="description" content="Browse live website, domain, newsletter and app auctions. Filter by category, revenue and time remaining.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234f39f6'/><text x='50' y='72' font-size='64' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>B</text></svg>">
+<script src="assets/js/app.js"></script>
+</head>
+<body>
+<header data-chrome="header"></header>
+
+<div class="wrap pg-head">
+  <h1>Live auctions</h1>
+  <p>Every lot opened at $1. Bids are binding, the clock extends on late action, and funds move through escrow.</p>
+</div>
+
+<div class="wrap" style="padding-top:26px;padding-bottom:70px">
+  <div class="filters">
+    <div class="search"><input id="q" type="search" placeholder="Search by name, domain, tech or seller…" aria-label="Search auctions"></div>
+    <select class="sel" id="sort" aria-label="Sort">
+      <option value="ending">Ending soonest</option>
+      <option value="new">Newest listed</option>
+      <option value="bids">Most bids</option>
+      <option value="low">Price: low to high</option>
+      <option value="high">Price: high to low</option>
+      <option value="mrr">Highest revenue</option>
+    </select>
+    <select class="sel" id="state" aria-label="Status">
+      <option value="live">Live only</option>
+      <option value="all">Live + ended</option>
+      <option value="ended">Ended</option>
+      <option value="watch">My watchlist</option>
+      <option value="verified">Verified sellers</option>
+      <option value="revenue">Revenue-generating</option>
+    </select>
+    <select class="sel" id="budget" aria-label="Budget">
+      <option value="">Any price</option>
+      <option value="0-500">Under $500</option>
+      <option value="500-2000">$500 – $2,000</option>
+      <option value="2000-5000">$2,000 – $5,000</option>
+      <option value="5000-999999">$5,000+</option>
+    </select>
+    <button class="btn btn-g btn-sm" id="clear">Reset</button>
+  </div>
+
+  <div class="chips" id="chips" style="margin-bottom:22px"></div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap">
+    <span id="count" style="font-size:.9rem;color:var(--ink-3)"></span>
+    <span style="font-size:.85rem;color:var(--ink-3)">Prices update live &middot; <span class="pulse" style="display:inline-block"></span></span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div id="none" style="display:none"></div>
+</div>
+
+<footer data-chrome="footer"></footer>
+
+<script>
+document.addEventListener('bys:ready', function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var params = new URLSearchParams(location.search);
+  var f = {
+    q: params.get('q') || '',
+    cat: params.get('cat') || '',
+    sort: params.get('sort') || 'ending',
+    state: params.get('state') || 'live',
+    budget: ''
+  };
+  $('#q').value = f.q; $('#sort').value = f.sort; $('#state').value = f.state;
+
+  function chips() {
+    $('#chips').innerHTML = ['<button class="chip' + (f.cat ? '' : ' on') + '" data-cat="">All categories</button>']
+      .concat(BYS.CATS.map(function (c) {
+        return '<button class="chip' + (f.cat === c ? ' on' : '') + '" data-cat="' + c + '">' + c + '</button>';
+      })).join('');
+    $('#chips').querySelectorAll('[data-cat]').forEach(function (b) {
+      b.onclick = function () { f.cat = b.dataset.cat; chips(); render(); };
+    });
+  }
+
+  function match(it) {
+    var now = Date.now(), isLive = it.endsAt > now;
+    if (f.state === 'live' && !isLive) return false;
+    if (f.state === 'ended' && isLive) return false;
+    if (f.state === 'watch' && !BYS.isWatched(it.id)) return false;
+    if (f.state === 'verified' && !it.verified) return false;
+    if (f.state === 'revenue' && !it.mrr) return false;
+    if (f.cat && it.cat !== f.cat) return false;
+    if (f.budget) {
+      var b = f.budget.split('-');
+      if (it.cur < Number(b[0]) || it.cur > Number(b[1])) return false;
+    }
+    if (f.q) {
+      var hay = [it.title, it.domain, it.cat, it.tagline, it.seller, (it.tech || []).join(' ')].join(' ').toLowerCase();
+      if (hay.indexOf(f.q.toLowerCase()) === -1) return false;
+    }
+    return true;
+  }
+
+  var SORTS = {
+    ending: function (a, b) { return a.endsAt - b.endsAt; },
+    new: function (a, b) { return b.createdAt - a.createdAt; },
+    bids: function (a, b) { return b.bids - a.bids; },
+    low: function (a, b) { return a.cur - b.cur; },
+    high: function (a, b) { return b.cur - a.cur; },
+    mrr: function (a, b) { return b.mrr - a.mrr; }
+  };
+
+  function render() {
+    var rows = BYS.all().filter(match).sort(SORTS[f.sort] || SORTS.ending);
+    $('#count').textContent = rows.length + ' lot' + (rows.length === 1 ? '' : 's') +
+      (f.cat ? ' in ' + f.cat : '') + (f.q ? ' matching "' + f.q + '"' : '');
+    $('#grid').innerHTML = rows.map(BYS.cardHTML).join('');
+    $('#none').style.display = rows.length ? 'none' : 'block';
+    $('#none').innerHTML = rows.length ? '' :
+      '<div class="empty"><div class="ic">&#128269;</div><h4>Nothing matches those filters</h4>' +
+      '<p>Try widening the price range, or clear the search.</p>' +
+      '<a class="btn btn-p" style="margin-top:16px" href="sell.html">List something yourself</a></div>';
+    BYS.bindWatch();
+    BYS.timers();
+  }
+
+  var t;
+  $('#q').addEventListener('input', function (e) {
+    clearTimeout(t); t = setTimeout(function () { f.q = e.target.value.trim(); render(); }, 180);
+  });
+  $('#sort').onchange = function (e) { f.sort = e.target.value; render(); };
+  $('#state').onchange = function (e) { f.state = e.target.value; render(); };
+  $('#budget').onchange = function (e) { f.budget = e.target.value; render(); };
+  $('#clear').onclick = function () {
+    f = { q: '', cat: '', sort: 'ending', state: 'live', budget: '' };
+    $('#q').value = ''; $('#sort').value = 'ending'; $('#state').value = 'live'; $('#budget').value = '';
+    chips(); render();
+  };
+
+  document.addEventListener('bys:update', render);
+  document.addEventListener('bys:watch', function () { if (f.state === 'watch') render(); });
+  chips(); render();
+});
+</script>
+
+<!-- Vercel Web Analytics -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
